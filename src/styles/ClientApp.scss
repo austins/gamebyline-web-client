@@ -79,9 +79,10 @@ figure.is-type-video.wp-embed-aspect-16-9 .wp-block-embed__wrapper {
     @extend .ratio, .ratio-16x9;
 }
 
-.blocks-gallery-grid {
+.blocks-gallery-grid,
+.wp-block-gallery {
     padding-left: 0;
-    display: flex;
+    display: flex !important;
     flex-direction: row;
 }
 
@@ -91,7 +92,8 @@ figure.is-type-video.wp-embed-aspect-16-9 .wp-block-embed__wrapper {
 }
 
 .blocks-gallery-item__caption,
-.wp-caption-text {
+.wp-caption-text,
+figcaption {
     @extend .text-muted;
     text-align: center;
     font-style: italic;
