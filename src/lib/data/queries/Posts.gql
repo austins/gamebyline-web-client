@@ -1,0 +1,37 @@
+query ($categorySlug: String, $authorSlug: String, $search: String, $size: Int!, $offset: Int) {
+    posts(where: { status: PUBLISH, orderby: { field: DATE, order: DESC }, categoryName: $categorySlug, authorName: $authorSlug, search: $search, offsetPagination: { size: $size, offset: $offset } }) {
+        pageInfo {
+            offsetPagination {
+                hasMore
+                hasPrevious
+            }
+        }
+        edges {
+            node {
+                id
+                slug
+                dateGmt
+                title
+                excerpt
+                content
+                author {
+                    node {
+                        name
+                        slug
+                    }
+                }
+                categories {
+                    nodes {
+                        name
+                        slug
+                    }
+                }
+                featuredImage {
+                    node {
+                        mediaItemUrl
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,9 @@
+{
+    "extends": "@ijsto",
+    "rules": {
+        "no-await-in-loop": "off",
+        "no-plusplus": "off",
+        "no-restricted-syntax": "off",
+        "sort-keys": "off"
+    }
+}

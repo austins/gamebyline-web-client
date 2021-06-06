@@ -1,0 +1,50 @@
+@import 'ClientApp_variables';
+@import 'node_modules/bootswatch/dist/cosmo/variables';
+@import "node_modules/bootstrap/scss/functions";
+@import 'node_modules/bootstrap/scss/variables';
+@import 'node_modules/bootstrap/scss/mixins/breakpoints';
+
+.postCardLink {
+    color: $body-color;
+
+    &:hover {
+        text-decoration: none;
+        color: $body-color;
+    }
+}
+
+.postCard {
+    background-color: $dark;
+    display: block;
+    flex-direction: unset;
+    position: relative;
+    top: 0;
+    transition: all ease-in-out 0.1s;
+    height: 100%;
+    border-color: #3f3f3f;
+
+    &:hover {
+        cursor: pointer;
+        top: -4px;
+        border-color: $primary;
+    }
+}
+
+.postThumbnail {
+    max-height: 200px;
+    object-fit: cover;
+}
+
+.postMeta {
+    color: $text-muted;
+    font-size: $small-font-size;
+
+    span {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    span > svg {
+        margin-right: 4px;
+    }
+}
