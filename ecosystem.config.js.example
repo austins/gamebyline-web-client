@@ -3,7 +3,7 @@ module.exports = {
         {
             name: 'gamebyline-web-client',
             script: 'node_modules/next/dist/bin/next',
-            args: 'start --port 5000',
+            args: 'start --port 5001',
             env: {
                 NODE_ENV: 'production'
             },
