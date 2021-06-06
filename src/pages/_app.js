@@ -75,7 +75,7 @@ ClientApp.getInitialProps = async appContext => {
             query {
                 menus(where: { slug: "header" }) {
                     nodes {
-                        menuItems(first: 50) {
+                        menuItems(first: 100) {
                             nodes {
                                 key: id
                                 parentId

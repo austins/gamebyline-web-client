@@ -246,7 +246,7 @@ export async function getStaticPaths() {
     const { data } = await apolloClient.query({
         query: gql`
             query {
-                posts(where: { status: PUBLISH }) {
+                posts(first: 100, where: { status: PUBLISH }) {
                     nodes {
                         uri
                     }

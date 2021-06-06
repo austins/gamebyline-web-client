@@ -52,6 +52,7 @@ export async function getStaticPaths() {
         query: gql`
             query ($size: Int!) {
                 posts(
+                    first: 100
                     where: { status: PUBLISH, orderby: { field: DATE, order: DESC }, offsetPagination: { size: $size } }
                 ) {
                     pageInfo {

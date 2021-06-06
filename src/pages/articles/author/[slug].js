@@ -46,7 +46,7 @@ export async function getStaticPaths() {
     const { data } = await apolloClient.query({
         query: gql`
             query {
-                users(where: { hasPublishedPosts: POST }) {
+                users(first: 100, where: { hasPublishedPosts: POST }) {
                     nodes {
                         slug
                     }
