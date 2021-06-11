@@ -2,6 +2,7 @@ name: Dependabot Auto Merge
 
 on:
     pull_request:
+        branches: [ master ]
 
 jobs:
     auto-merge:
@@ -9,5 +10,5 @@ jobs:
         steps:
         - uses: ahmadnassri/action-dependabot-auto-merge@v2
           with:
+              github-token: ${{ secrets.AUTO_MERGE_TOKEN }}
               target: minor
-              github-token: ${{ secrets.GITHUB_TOKEN }}
