@@ -48,7 +48,7 @@ export async function getStaticProps({ params }) {
         const { data: csgoCrosshairsData } = await apolloClient.query({
             query: gql`
                 query {
-                    csgoCrosshairs(first: 100, where: { orderby: { field: DATE, order: ASC } }) {
+                    csgoCrosshairs(first: 100, where: { orderby: { field: TITLE, order: ASC } }) {
                         nodes {
                             id
                             title
