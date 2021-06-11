@@ -24,7 +24,6 @@ jobs:
     analyze:
         name: Analyze
         runs-on: ubuntu-latest
-        if: github.actor != 'dependabot[bot]'
         permissions:
             actions: read
             contents: read
@@ -70,3 +69,10 @@ jobs:
 
             -   name: Perform CodeQL Analysis
                 uses: github/codeql-action/analyze@v1
+    automerge:
+        needs: analyze
+        runs-on: ubuntu-latest
+        steps:
+            - uses: fastify/github-action-merge-dependabot@v2.0.0
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
