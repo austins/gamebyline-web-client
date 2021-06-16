@@ -45,7 +45,7 @@ function ClientApp({ Component, pageProps, menuItems }) {
             router.events.off('routeChangeComplete', handleRouteChangeComplete);
             router.events.off('routeChangeError', handleRouteChangeError);
         };
-    }, [router.events]);
+    }, [router]);
 
     return (
         <ApolloProvider client={apolloClient}>

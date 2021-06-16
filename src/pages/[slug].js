@@ -54,6 +54,10 @@ export async function getStaticProps({ params }) {
                             title
                             featuredImage {
                                 node {
+                                    mediaDetails {
+                                        width
+                                        height
+                                    }
                                     mediaItemUrl
                                 }
                             }

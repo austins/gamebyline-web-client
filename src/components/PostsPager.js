@@ -1,8 +1,8 @@
-import { Button, ButtonGroup } from 'react-bootstrap';
+import { ButtonGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faChevronRight, faChevronUp } from '@fortawesome/free-solid-svg-icons';
-import Link from 'next/link';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import styles from '../styles/PostsPager.module.scss';
+import PostsPagerButton from './PostsPagerButton';
 
 export default function PostsPager({ authorSlug, categorySlug, hasMore, hasPrevious, page, search }) {
     const articlesPath = '/articles';
@@ -31,17 +31,13 @@ export default function PostsPager({ authorSlug, categorySlug, hasMore, hasPrevi
             {(hasMore || hasPrevious) && (
                 <nav className={styles.pagination}>
                     <ButtonGroup>
-                        <Link href={paths.hasMorePath} passHref>
-                            <Button disabled={!hasMore} variant={hasMore ? 'primary' : 'secondary'}>
-                                <FontAwesomeIcon icon={faChevronLeft} /> Older
-                            </Button>
-                        </Link>
+                        <PostsPagerButton path={paths.hasMorePath} enabled={hasMore}>
+                            <FontAwesomeIcon icon={faChevronLeft} /> Older
+                        </PostsPagerButton>
 
-                        <Link href={paths.hasPreviousPath} passHref>
-                            <Button disabled={!hasPrevious} variant={hasPrevious ? 'primary' : 'secondary'}>
-                                Newer <FontAwesomeIcon icon={faChevronRight} />
-                            </Button>
-                        </Link>
+                        <PostsPagerButton path={paths.hasPreviousPath} enabled={hasPrevious}>
+                            Newer <FontAwesomeIcon icon={faChevronRight} />
+                        </PostsPagerButton>
                     </ButtonGroup>
                 </nav>
             )}

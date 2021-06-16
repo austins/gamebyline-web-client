@@ -1,4 +1,5 @@
 import { Table } from 'react-bootstrap';
+import Image from 'next/image';
 
 export default function CsgoCrosshairs({ csgoCrosshairs }) {
     return (
@@ -17,7 +18,13 @@ export default function CsgoCrosshairs({ csgoCrosshairs }) {
                     <tr key={csgoCrosshair.id}>
                         <td>
                             {csgoCrosshair.featuredImage && (
-                                <img src={csgoCrosshair.featuredImage.node.mediaItemUrl} alt={csgoCrosshair.title} />
+                                <Image
+                                    src={csgoCrosshair.featuredImage.node.mediaItemUrl}
+                                    alt={csgoCrosshair.title}
+                                    width={csgoCrosshair.featuredImage.node.mediaDetails.width}
+                                    height={csgoCrosshair.featuredImage.node.mediaDetails.height}
+                                    quality={100}
+                                />
                             )}
                         </td>
                         <td>{csgoCrosshair.title}</td>

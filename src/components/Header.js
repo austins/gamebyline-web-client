@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
+import logoLight from '../../public/assets/images/logo-light.png';
 import HeaderMenuItemLink from './HeaderMenuItemLink';
 import styles from '../styles/Header.module.scss';
 
@@ -24,12 +26,8 @@ export default function Header({ menuItems }) {
             <Navbar bg="dark" variant="dark" expand="lg" className={styles.navbar}>
                 <Container>
                     <Link href="/" passHref>
-                        <Navbar.Brand>
-                            <img
-                                src="/assets/images/logo-light.png"
-                                alt={process.env.NEXT_PUBLIC_SITE_NAME}
-                                className={styles.logoImage}
-                            />
+                        <Navbar.Brand className={styles.navbarBrand}>
+                            <Image src={logoLight} alt={process.env.NEXT_PUBLIC_SITE_NAME} quality={100} priority />
                         </Navbar.Brand>
                     </Link>
 

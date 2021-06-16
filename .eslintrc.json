@@ -1,5 +1,8 @@
 {
-    "extends": "@ijsto",
+    "extends": [
+        "@ijsto",
+        "plugin:@next/next/recommended"
+    ],
     "rules": {
         "no-await-in-loop": "off",
         "no-plusplus": "off",
