@@ -2,6 +2,8 @@ import { gql } from 'urql';
 import { getUrqlClientStandalone } from '../../lib/data/urql';
 
 export default async function handler(req, res) {
+    if (req.method !== 'GET') return res.status(405).send();
+
     const urqlClient = getUrqlClientStandalone(true, req.headers.cookie);
 
     const { data } = await urqlClient

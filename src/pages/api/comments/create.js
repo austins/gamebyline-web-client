@@ -4,7 +4,8 @@ import { getUrqlClientStandalone } from '../../../lib/data/urql';
 import { commentFieldsFragment } from '../../../lib/data/queries';
 
 export default async function handler(req, res) {
-    if (req.method !== 'POST' || !req.body) return res.status(405).send();
+    if (req.method !== 'POST') return res.status(405).send();
+    if (!req.body) return res.status(400).send();
 
     const urqlClient = getUrqlClientStandalone(true, req.headers.cookie);
     const { data, error } = await urqlClient
