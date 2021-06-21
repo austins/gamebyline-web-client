@@ -1,4 +1,5 @@
 import { gql } from 'urql';
+import he from 'he';
 import { getUrqlClientStandalone } from '../../../lib/data/urql';
 import { commentFieldsFragment } from '../../../lib/data/queries';
 
@@ -44,10 +45,7 @@ export default async function handler(req, res) {
         )
         .toPromise();
 
-    if (error) {
-        // console.error(error);
-        return res.status(500).send();
-    }
+    if (error) return res.status(500).json({ error: { message: he.decode(error.graphQLErrors[0].message) } });
 
     return res.status(200).json(data.createComment);
 }

@@ -30,6 +30,7 @@ export default function CommentsList({ postDatabaseId, comments, latestCommentCo
     const [commentFormEmail, setCommentFormEmail] = useState('');
     const [commentFormMessage, setCommentFormMessage] = useState('');
     const [submitCommentSuccess, setSubmitCommentSuccess] = useState(null);
+    const [submitCommentError, setSubmitCommentError] = useState('');
     const [submitCommentId, setSubmitCommentId] = useState(null);
 
     const submitComment = e => {
@@ -48,6 +49,12 @@ export default function CommentsList({ postDatabaseId, comments, latestCommentCo
         })
             .then(res => res.json())
             .then(async data => {
+                if (data.error) {
+                    setSubmitCommentError(data.error.message);
+                    setSubmitCommentSuccess(false);
+                    return;
+                }
+
                 setReplyToCommentMetadata(null);
                 setCommentFormName('');
                 setCommentFormEmail('');
@@ -70,7 +77,10 @@ export default function CommentsList({ postDatabaseId, comments, latestCommentCo
                     setSubmitCommentSuccess(true);
                 }
             })
-            .catch(() => setSubmitCommentSuccess(false));
+            .catch(() => {
+                setSubmitCommentError('There was an error posting your comment. Please try again.');
+                setSubmitCommentSuccess(false);
+            });
     };
 
     const renderComment = (comment, level) => {
@@ -205,9 +215,7 @@ export default function CommentsList({ postDatabaseId, comments, latestCommentCo
                                 .
                             </>
                         )) ||
-                            (submitCommentSuccess === false && (
-                                <>There was an error posting your comment. Please try again.</>
-                            ))}
+                            (submitCommentSuccess === false && <>{submitCommentError}</>)}
                     </Alert>
                 )}
 
