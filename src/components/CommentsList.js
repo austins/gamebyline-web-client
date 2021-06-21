@@ -89,7 +89,7 @@ export default function CommentsList({ postDatabaseId, comments, latestCommentCo
 
         // Get avatar image.
         const avatarProps = { src: defaultAvatar, alt: author.name };
-        let avatarImage = <Image {...avatarProps} />;
+        let avatarImage = <Image {...avatarProps} quality={100} />;
         if (has(author, 'avatar')) {
             const { avatar } = author;
 
@@ -101,7 +101,11 @@ export default function CommentsList({ postDatabaseId, comments, latestCommentCo
             const siteUrlHost = new URL(process.env.NEXT_PUBLIC_SITE_URL).host;
 
             // eslint-disable-next-line jsx-a11y/alt-text
-            avatarImage = avatarUrlHost.includes(siteUrlHost) ? <Image {...avatarProps} /> : <img {...avatarProps} />;
+            avatarImage = avatarUrlHost.includes(siteUrlHost) ? (
+                <Image {...avatarProps} quality={100} />
+            ) : (
+                <img {...avatarProps} />
+            );
         }
 
         const getAuthorLink = showAvatar => {
