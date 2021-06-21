@@ -1,0 +1,24 @@
+@import 'node_modules/bootswatch/dist/zephyr/variables';
+@import "node_modules/bootstrap/scss/functions";
+@import 'node_modules/bootstrap/scss/variables';
+
+.comment {
+    &:first-child {
+        border-top: 0 !important;
+        padding-top: 0 !important;
+    }
+}
+
+.commentMeta {
+    color: $text-muted;
+    font-size: $small-font-size;
+
+    span {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    span > svg {
+        margin-right: 4px;
+    }
+}

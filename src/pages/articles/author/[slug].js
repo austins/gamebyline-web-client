@@ -1,11 +1,34 @@
-import { gql } from '@apollo/client';
+import { gql, useQuery } from 'urql';
+
+import Error from 'next/error';
 import Posts from '../../../components/Posts';
-import postsQuery from '../../../lib/data/queries/Posts.gql';
-import { apolloClient, flattenEdges } from '../../../lib/data/apollo';
 import PostsPager from '../../../components/PostsPager';
 import HeadWithTitle from '../../../components/HeadWithTitle';
+import { getUrqlClient, wrapUrqlClient } from '../../../lib/data/urql';
+import LoadingSpinner from '../../../components/LoadingSpinner';
+import { postsQuery } from '../../../lib/data/queries';
+import { flattenEdges } from '../../../lib/data/helpers';
 
-export default function Author({ authorName, hasMore, hasPrevious, page, posts, slug }) {
+const getPostsQueryVars = slug => ({ authorSlug: slug, size: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE) });
+
+function Author({ page, slug }) {
+    const [result] = useQuery({
+        query: postsQuery,
+        variables: getPostsQueryVars(slug),
+    });
+
+    const { data, fetching, error } = result;
+
+    if (fetching) return <LoadingSpinner />;
+    if (error) return <Error statusCode={500} title="Error retrieving articles" />;
+
+    const posts = flattenEdges(data.posts);
+    if (!posts.length) return <Error statusCode={404} title="Articles not found" />;
+
+    const { hasMore, hasPrevious } = data.posts.pageInfo.offsetPagination;
+
+    const authorName = posts[0].author.node.name;
+
     return (
         <div>
             <HeadWithTitle title={authorName} noIndex />
@@ -19,23 +42,14 @@ export default function Author({ authorName, hasMore, hasPrevious, page, posts, 
 export async function getStaticProps({ params }) {
     const page = 1;
     const { slug } = params;
-    const { data } = await apolloClient.query({
-        query: postsQuery,
-        variables: { authorSlug: slug, size: Number(process.env.POSTS_PER_PAGE) },
-    });
 
-    const posts = flattenEdges(data.posts);
-    if (!posts.length) return { notFound: true };
-
-    const { hasMore, hasPrevious } = data.posts.pageInfo.offsetPagination;
+    const { urqlClient, ssrCache } = getUrqlClient();
+    await urqlClient.query(postsQuery, getPostsQueryVars(slug)).toPromise();
 
     return {
         props: {
-            authorName: posts[0].author.node.name,
-            hasMore,
-            hasPrevious,
+            urqlState: ssrCache.extractData(),
             page,
-            posts,
             slug,
         },
         revalidate: Number(process.env.REVALIDATION_IN_SECONDS),
@@ -43,17 +57,20 @@ export async function getStaticProps({ params }) {
 }
 
 export async function getStaticPaths() {
-    const { data } = await apolloClient.query({
-        query: gql`
-            query {
-                users(first: 100, where: { hasPublishedPosts: POST }) {
-                    nodes {
-                        slug
+    const { urqlClient } = getUrqlClient();
+    const { data } = await urqlClient
+        .query(
+            gql`
+                query {
+                    users(first: 100, where: { hasPublishedPosts: POST }) {
+                        nodes {
+                            slug
+                        }
                     }
                 }
-            }
-        `,
-    });
+            `
+        )
+        .toPromise();
 
     const users = data.users.nodes;
 
@@ -63,3 +80,5 @@ export async function getStaticPaths() {
 
     return { fallback: 'blocking', paths };
 }
+
+export default wrapUrqlClient(Author);

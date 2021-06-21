@@ -1,13 +1,39 @@
 import isInt from 'validator/lib/isInt';
-import { gql } from '@apollo/client';
+import { gql, useQuery } from 'urql';
+import Error from 'next/error';
 import Posts from '../../../../components/Posts';
-import postsQuery from '../../../../lib/data/queries/Posts.gql';
-import { apolloClient, flattenEdges } from '../../../../lib/data/apollo';
 import Breadcrumbs, { Crumb } from '../../../../components/Breadcrumbs';
 import PostsPager from '../../../../components/PostsPager';
 import HeadWithTitle from '../../../../components/HeadWithTitle';
+import { getUrqlClient, wrapUrqlClient } from '../../../../lib/data/urql';
+import { postsQuery } from '../../../../lib/data/queries';
+import LoadingSpinner from '../../../../components/LoadingSpinner';
+import { flattenEdges } from '../../../../lib/data/helpers';
 
-export default function CategoryByPage({ categoryName, hasMore, hasPrevious, page, posts, slug }) {
+const getPostsQueryVars = (slug, page) => ({
+    categorySlug: slug,
+    offset: page <= 1 ? 0 : (page - 1) * process.env.NEXT_PUBLIC_POSTS_PER_PAGE,
+    size: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE),
+});
+
+function CategoryByPage({ page, slug }) {
+    const [result] = useQuery({
+        query: postsQuery,
+        variables: getPostsQueryVars(slug, page),
+    });
+
+    const { data, fetching, error } = result;
+
+    if (fetching) return <LoadingSpinner />;
+    if (error) return <Error statusCode={500} title="Error retrieving articles" />;
+
+    const posts = flattenEdges(data.posts);
+    if (!posts.length) return { notFound: true };
+
+    const { hasMore, hasPrevious } = data.posts.pageInfo.offsetPagination;
+
+    const categoryName = posts[0].categories.nodes[0].name;
+
     const crumbs = [
         new Crumb(`/articles/topic/${slug}`, categoryName),
         new Crumb(`/articles/topic/${slug}/${page}`, `Page ${page}`),
@@ -32,62 +58,61 @@ export default function CategoryByPage({ categoryName, hasMore, hasPrevious, pag
 export async function getStaticProps({ params }) {
     const { slug } = params;
     const page = params.page && isInt(params.page, { min: 1, allow_leading_zeroes: false }) ? Number(params.page) : 1;
-    const { data } = await apolloClient.query({
-        query: postsQuery,
-        variables: {
-            categorySlug: slug,
-            offset: page <= 1 ? 0 : (page - 1) * process.env.POSTS_PER_PAGE,
-            size: Number(process.env.POSTS_PER_PAGE),
-        },
-    });
 
-    const posts = flattenEdges(data.posts);
-    if (!posts.length) return { notFound: true };
-
-    const { hasMore, hasPrevious } = data.posts.pageInfo.offsetPagination;
+    const { urqlClient, ssrCache } = getUrqlClient();
+    await urqlClient.query(postsQuery, getPostsQueryVars(slug, page)).toPromise();
 
     return {
-        props: { categoryName: posts[0].categories.nodes[0].name, hasMore, hasPrevious, page, posts, slug },
+        props: { urqlState: ssrCache.extractData(), page, slug },
         revalidate: Number(process.env.REVALIDATION_IN_SECONDS),
     };
 }
 
 export async function getStaticPaths() {
-    const { data: categoriesData } = await apolloClient.query({
-        query: gql`
-            query {
-                categories(first: 100, where: { hideEmpty: true }) {
-                    nodes {
-                        slug
+    const { urqlClient } = getUrqlClient();
+    const { data: categoriesData } = await urqlClient
+        .query(
+            gql`
+                query {
+                    categories(first: 100, where: { hideEmpty: true }) {
+                        nodes {
+                            slug
+                        }
                     }
                 }
-            }
-        `,
-    });
+            `
+        )
+        .toPromise();
 
     const paths = [];
     const categories = categoriesData.categories.nodes;
     for (const category of categories) {
-        const { data: postsData } = await apolloClient.query({
-            query: gql`
-                query ($categorySlug: String!, $size: Int!) {
-                    posts(where: { status: PUBLISH, categoryName: $categorySlug, offsetPagination: { size: $size } }) {
-                        pageInfo {
-                            offsetPagination {
-                                total
+        const { data: postsData } = await urqlClient
+            .query(
+                gql`
+                    query ($categorySlug: String!, $size: Int!) {
+                        posts(
+                            where: { status: PUBLISH, categoryName: $categorySlug, offsetPagination: { size: $size } }
+                        ) {
+                            pageInfo {
+                                offsetPagination {
+                                    total
+                                }
                             }
                         }
                     }
-                }
-            `,
-            variables: { categorySlug: category.slug, size: Number(process.env.POSTS_PER_PAGE) },
-        });
+                `,
+                { categorySlug: category.slug, size: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE) }
+            )
+            .toPromise();
 
         const totalPosts = postsData.posts.pageInfo.offsetPagination.total;
-        for (let i = 1; i <= Math.ceil(totalPosts / process.env.POSTS_PER_PAGE); i++) {
+        for (let i = 1; i <= Math.ceil(totalPosts / process.env.NEXT_PUBLIC_POSTS_PER_PAGE); i++) {
             paths.push({ params: { page: i.toString(), slug: category.slug } });
         }
     }
 
     return { fallback: 'blocking', paths };
 }
+
+export default wrapUrqlClient(CategoryByPage);

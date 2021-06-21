@@ -1,10 +1,25 @@
-import { gql } from '@apollo/client';
-import { apolloClient } from '../lib/data/apollo';
+import { gql, useQuery } from 'urql';
+import Error from 'next/error';
 import HeadWithTitle from '../components/HeadWithTitle';
 import CsgoCrosshairs from '../components/CsgoCrosshairs';
 import styles from '../styles/Page.module.scss';
+import { getUrqlClient, wrapUrqlClient } from '../lib/data/urql';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { csgoCrosshairsQuery, pageQuery } from '../lib/data/queries';
 
-export default function Page({ page, slug, csgoCrosshairs }) {
+const csgoCrosshairsSlug = 'csgo-crosshairs';
+const getPageQueryVars = slug => ({ slug });
+
+function Page({ slug, csgoCrosshairs }) {
+    const [result] = useQuery({ query: pageQuery, variables: getPageQueryVars(slug) });
+    const { data, fetching, error } = result;
+
+    if (fetching) return <LoadingSpinner />;
+    if (error) return <Error statusCode={500} title="Error retrieving page" />;
+
+    const page = data.pageBy;
+    if (!page) return <Error statusCode={404} title="Page not found" />;
+
     return (
         <div>
             <HeadWithTitle title={page.title} innerHTMLString={page.seo.fullHead} />
@@ -16,7 +31,7 @@ export default function Page({ page, slug, csgoCrosshairs }) {
                 <div className={styles.pageContent} dangerouslySetInnerHTML={{ __html: page.content }} />
             </div>
 
-            {slug === 'csgo-crosshairs' && csgoCrosshairs && <CsgoCrosshairs csgoCrosshairs={csgoCrosshairs} />}
+            {csgoCrosshairs && <CsgoCrosshairs csgoCrosshairs={csgoCrosshairs} />}
         </div>
     );
 }
@@ -24,75 +39,39 @@ export default function Page({ page, slug, csgoCrosshairs }) {
 export async function getStaticProps({ params }) {
     const { slug } = params;
 
-    const { data } = await apolloClient.query({
-        query: gql`
-            query ($slug: String!) {
-                pageBy(uri: $slug) {
-                    title
-                    content
-                    seo {
-                        fullHead
-                    }
-                }
-            }
-        `,
-        variables: { slug },
-    });
+    const { urqlClient, ssrCache } = getUrqlClient();
 
-    const page = data.pageBy;
-    if (!page) return { notFound: true };
+    await urqlClient.query(pageQuery, getPageQueryVars(slug)).toPromise();
 
-    // Get data for CS:GO crosshairs page.
+    // If portfolio page, get projects.
     let csgoCrosshairs = null;
-    if (slug === 'csgo-crosshairs') {
-        const { data: csgoCrosshairsData } = await apolloClient.query({
-            query: gql`
-                query {
-                    csgoCrosshairs(first: 100, where: { orderby: { field: TITLE, order: ASC } }) {
-                        nodes {
-                            id
-                            title
-                            featuredImage {
-                                node {
-                                    mediaDetails {
-                                        width
-                                        height
-                                    }
-                                    mediaItemUrl
-                                }
-                            }
-                            csgoCrosshair {
-                                code
-                                style
-                            }
-                        }
-                    }
-                }
-            `,
-        });
-
-        if (csgoCrosshairsData.csgoCrosshairs && csgoCrosshairsData.csgoCrosshairs.nodes.length)
+    if (slug === csgoCrosshairsSlug) {
+        const { data: csgoCrosshairsData } = await urqlClient.query(csgoCrosshairsQuery).toPromise();
+        if (csgoCrosshairsData && csgoCrosshairsData.csgoCrosshairs.nodes.length)
             csgoCrosshairs = csgoCrosshairsData.csgoCrosshairs.nodes;
     }
 
     return {
-        props: { page, csgoCrosshairs, slug },
+        props: { urqlState: ssrCache.extractData(), slug, csgoCrosshairs },
         revalidate: Number(process.env.REVALIDATION_IN_SECONDS),
     };
 }
 
 export async function getStaticPaths() {
-    const { data } = await apolloClient.query({
-        query: gql`
-            query {
-                pages(first: 100, where: { status: PUBLISH }) {
-                    nodes {
-                        slug
+    const { urqlClient } = getUrqlClient();
+    const { data } = await urqlClient
+        .query(
+            gql`
+                query {
+                    pages(first: 100, where: { status: PUBLISH }) {
+                        nodes {
+                            slug
+                        }
                     }
                 }
-            }
-        `,
-    });
+            `
+        )
+        .toPromise();
 
     const pages = data.pages.nodes;
 
@@ -102,3 +81,5 @@ export async function getStaticPaths() {
 
     return { fallback: 'blocking', paths };
 }
+
+export default wrapUrqlClient(Page);

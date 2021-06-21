@@ -7,9 +7,15 @@ import Image from 'next/image';
 import logoLight from '../../public/assets/images/logo-light.png';
 import HeaderMenuItemLink from './HeaderMenuItemLink';
 import styles from '../styles/Header.module.scss';
+import globalDataManifest from '../../globalDataManifest.json';
+import { mapMenuItemsChildrenToParents } from '../lib/data/helpers';
 
-export default function Header({ menuItems }) {
+export default function Header() {
     const router = useRouter();
+
+    // Get menu items.
+    let menuItems = globalDataManifest.headerMenuItems ?? [];
+    if (menuItems.length) menuItems = mapMenuItemsChildrenToParents(menuItems);
 
     const search = e => {
         e.preventDefault();

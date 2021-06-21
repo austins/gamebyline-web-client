@@ -1,11 +1,3 @@
-import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
-
-export const apolloClient = new ApolloClient({
-    cache: new InMemoryCache(),
-    ssrMode: true,
-    link: new HttpLink({ uri: process.env.API_GRAPHQL_URL }),
-});
-
 export function flattenEdges(data) {
     return data.edges.reduce((accumulator, obj) => {
         accumulator.push(obj.node);

@@ -35,7 +35,8 @@ jobs:
             -   run: npm run build
                 env:
                     NODE_ENV: "production"
-                    API_GRAPHQL_URL: ${{ secrets.API_GRAPHQL_URL }}
+                    NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+                    NEXT_PUBLIC_API_GRAPHQL_URL: ${{ secrets.NEXT_PUBLIC_API_GRAPHQL_URL }}
 
             #- run: npm test
 

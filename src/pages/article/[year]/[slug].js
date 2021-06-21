@@ -1,31 +1,45 @@
 import isInt from 'validator/lib/isInt';
-import { gql } from '@apollo/client';
+import { useQuery } from 'urql';
 import { faClock, faComments, faTag, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Moment from 'react-moment';
 import Link from 'next/link';
-import { CommentCount, DiscussionEmbed } from 'disqus-react';
 import { Link as LinkScroll } from 'react-scroll';
+import { useState } from 'react';
 import { SRLWrapper } from 'simple-react-lightbox';
 import Image from 'next/image';
-import { apolloClient } from '../../../lib/data/apollo';
+import Error from 'next/error';
+import has from 'lodash/has';
 import HeadWithTitle from '../../../components/HeadWithTitle';
 import styles from '../../../styles/Post.module.scss';
+import CommentsList from '../../../components/CommentsList';
+import { getUrqlClient, wrapUrqlClient } from '../../../lib/data/urql';
+import LoadingSpinner from '../../../components/LoadingSpinner';
+import { postQuery } from '../../../lib/data/queries';
 
-export default function Post({ post, slug, year }) {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+const getPostQueryVars = slug => ({ slug });
 
-    // This is the identifier format used by the official "Disqus for WordPress" plugin.
-    const disqusIdentifier = `${post.databaseId} ${siteUrl}/${new URL(post.guid).search}`;
+function Post({ year, slug, commentCount }) {
+    // We use state for comment count here and comments in CommentsList
+    // instead of re-execute function from useQuery to prevent flashing/reload of the page.
+    const [latestCommentCount, setLatestCommentCount] = useState(commentCount);
 
-    const disqusProps = {
-        config: {
-            identifier: disqusIdentifier,
-            title: post.title,
-            url: new URL(`/article/${year}/${slug}`, siteUrl).href,
-        },
-        shortname: process.env.NEXT_PUBLIC_DISQUS_SHORTNAME,
-    };
+    const [result] = useQuery({ query: postQuery, variables: getPostQueryVars(slug) });
+
+    const { data, fetching, error } = result;
+
+    if (fetching) return <LoadingSpinner />;
+    if (error) return <Error statusCode={500} title="Error retrieving articles" />;
+
+    const post = data.postBy;
+
+    if (
+        !post ||
+        !isInt(year, { allow_leading_zeroes: false }) ||
+        new Date(`${post.dateGmt}Z`).getUTCFullYear() !== Number.parseInt(year, 10)
+    ) {
+        return <Error statusCode={404} title="Article not found" />;
+    }
 
     return (
         <div>
@@ -63,8 +77,8 @@ export default function Post({ post, slug, year }) {
                         <span>
                             <FontAwesomeIcon icon={faComments} />
                             <LinkScroll href="#comments" to="comments" smooth duration={100}>
-                                <noscript>{post.commentCount ? `${post.commentCount} Comments` : 'Comments'}</noscript>
-                                <CommentCount {...disqusProps}>Comments</CommentCount>
+                                {latestCommentCount > 0 && `${latestCommentCount} `}
+                                {latestCommentCount === 1 ? 'Comment' : 'Comments'}
                             </LinkScroll>
                         </span>
                     </div>
@@ -135,125 +149,52 @@ export default function Post({ post, slug, year }) {
                 )}
             </article>
 
-            <hr className="mt-5" />
+            <hr className="mt-5 mb-4" />
 
             <section id="comments">
-                <noscript>
-                    <h3>Comments</h3>
+                <h3>Comments</h3>
 
-                    {post.comments.nodes.length && (
-                        <ol>
-                            {post.comments.nodes.map(comment => {
-                                const commentDate = new Date(`${comment.dateGmt}Z`);
-
-                                return (
-                                    <li key={comment.commentId}>
-                                        <header>
-                                            <strong>{comment.author.node.name}</strong>
-                                            {' on '}
-                                            <time dateTime={commentDate.toISOString()}>
-                                                {commentDate.toUTCString()}
-                                            </time>
-                                        </header>
-
-                                        {/* eslint-disable-next-line react/no-danger */}
-                                        <div dangerouslySetInnerHTML={{ __html: comment.content }} />
-                                    </li>
-                                );
-                            })}
-                        </ol>
-                    )}
-                </noscript>
-
-                <DiscussionEmbed {...disqusProps} />
+                <CommentsList
+                    postDatabaseId={post.databaseId}
+                    comments={post.comments}
+                    latestCommentCount={latestCommentCount}
+                    setLatestCommentCount={setLatestCommentCount}
+                />
             </section>
         </div>
     );
 }
 
-export async function getStaticProps({ params }) {
+export async function getServerSideProps({ params }) {
+    // We use getServerSideProps to ensure that the latest comment count and comments appear
+    // and depend on the urql cache for query speed. If Next.js implements on-demand invalidation of pages,
+    // we can switch to getStaticProps and we can add revalidate here.
+
     const { slug, year } = params;
 
-    const { data } = await apolloClient.query({
-        query: gql`
-            query ($slug: String!) {
-                postBy(slug: $slug) {
-                    id
-                    databaseId
-                    guid
-                    status
-                    title
-                    content
-                    dateGmt
-                    author {
-                        node {
-                            name
-                            slug
-                            description
-                            avatar(size: 60) {
-                                url
-                                width
-                                height
-                            }
-                        }
-                    }
-                    categories {
-                        nodes {
-                            name
-                            slug
-                        }
-                    }
-                    commentCount
-                    comments(where: { order: ASC, orderby: COMMENT_DATE_GMT }) {
-                        nodes {
-                            commentId
-                            content
-                            author {
-                                node {
-                                    name
-                                }
-                            }
-                            dateGmt
-                        }
-                    }
-                    seo {
-                        fullHead
-                    }
-                }
-            }
-        `,
-        variables: { slug },
-    });
+    const { urqlClient, ssrCache } = getUrqlClient();
+    const { data } = await urqlClient.query(postQuery, getPostQueryVars(slug)).toPromise();
 
-    const post = data.postBy;
+    if (!has(data, 'postBy.commentCount')) return { notFound: true };
 
-    if (
-        !post ||
-        !isInt(year, { allow_leading_zeroes: false }) ||
-        new Date(`${post.dateGmt}Z`).getUTCFullYear() !== Number.parseInt(year, 10) ||
-        post.status !== 'publish'
-    ) {
-        return { notFound: true };
-    }
-
-    return {
-        props: { post, slug, year },
-        revalidate: Number(process.env.REVALIDATION_IN_SECONDS),
-    };
+    return { props: { urqlState: ssrCache.extractData(), year, slug, commentCount: data.postBy.commentCount } };
 }
 
-export async function getStaticPaths() {
-    const { data } = await apolloClient.query({
-        query: gql`
-            query {
-                posts(first: 100, where: { status: PUBLISH }) {
-                    nodes {
-                        uri
+/* export async function getStaticPaths() {
+    const { urqlClient } = getUrqlClient();
+    const { data } = await urqlClient
+        .query(
+            gql`
+                query {
+                    posts(first: 100, where: { status: PUBLISH }) {
+                        nodes {
+                            uri
+                        }
                     }
                 }
-            }
-        `,
-    });
+            `
+        )
+        .toPromise();
 
     const posts = data.posts.nodes;
 
@@ -268,4 +209,6 @@ export async function getStaticPaths() {
     });
 
     return { fallback: 'blocking', paths };
-}
+} */
+
+export default wrapUrqlClient(Post);

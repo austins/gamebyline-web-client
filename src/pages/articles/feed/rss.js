@@ -1,15 +1,16 @@
 import { Feed } from 'feed';
 import striptags from 'striptags';
-import postsQuery from '../../../lib/data/queries/Posts.gql';
-import { apolloClient, flattenEdges } from '../../../lib/data/apollo';
+import { getUrqlClient, wrapUrqlClient } from '../../../lib/data/urql';
+import { postsQuery } from '../../../lib/data/queries';
+import { flattenEdges } from '../../../lib/data/helpers';
 
-export default function ArticlesRssFeed() {}
+function ArticlesRssFeed() {}
 
 export async function getServerSideProps({ req, res }) {
-    const { data } = await apolloClient.query({
-        query: postsQuery,
-        variables: { size: Number(process.env.POSTS_PER_PAGE) },
-    });
+    const { urqlClient } = getUrqlClient();
+    const { data } = await urqlClient
+        .query(postsQuery, { size: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE) })
+        .toPromise();
 
     const posts = flattenEdges(data.posts);
     const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
@@ -45,3 +46,5 @@ export async function getServerSideProps({ req, res }) {
 
     return { props: {} };
 }
+
+export default wrapUrqlClient(ArticlesRssFeed);

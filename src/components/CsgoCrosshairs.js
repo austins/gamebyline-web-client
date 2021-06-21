@@ -14,26 +14,27 @@ export default function CsgoCrosshairs({ csgoCrosshairs }) {
             </thead>
 
             <tbody>
-                {csgoCrosshairs.map(csgoCrosshair => (
-                    <tr key={csgoCrosshair.id}>
-                        <td>
-                            {csgoCrosshair.featuredImage && (
-                                <Image
-                                    src={csgoCrosshair.featuredImage.node.mediaItemUrl}
-                                    alt={csgoCrosshair.title}
-                                    width={csgoCrosshair.featuredImage.node.mediaDetails.width}
-                                    height={csgoCrosshair.featuredImage.node.mediaDetails.height}
-                                    quality={100}
-                                />
-                            )}
-                        </td>
-                        <td>{csgoCrosshair.title}</td>
-                        <td>{csgoCrosshair.csgoCrosshair.style}</td>
-                        <td>
-                            <code>{csgoCrosshair.csgoCrosshair.code}</code>
-                        </td>
-                    </tr>
-                ))}
+                {csgoCrosshairs.length > 0 &&
+                    csgoCrosshairs.map(csgoCrosshair => (
+                        <tr key={csgoCrosshair.id}>
+                            <td>
+                                {csgoCrosshair.featuredImage && (
+                                    <Image
+                                        src={csgoCrosshair.featuredImage.node.mediaItemUrl}
+                                        alt={csgoCrosshair.title}
+                                        width={csgoCrosshair.featuredImage.node.mediaDetails.width}
+                                        height={csgoCrosshair.featuredImage.node.mediaDetails.height}
+                                        quality={100}
+                                    />
+                                )}
+                            </td>
+                            <td>{csgoCrosshair.title}</td>
+                            <td>{csgoCrosshair.csgoCrosshair.style}</td>
+                            <td>
+                                <code>{csgoCrosshair.csgoCrosshair.code}</code>
+                            </td>
+                        </tr>
+                    ))}
             </tbody>
         </Table>
     );

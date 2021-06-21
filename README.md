@@ -1,6 +1,6 @@
 # gamebyline-web-client
 
-The frontend for _[Game Byline](https://gamebyline.com)_, powered by Next.js, React, GraphQL with Apollo Client, and Bootstrap. Based on [austinsdev-web-client](https://github.com/austins/austinsdev-web-client).
+The frontend for _[Game Byline](https://gamebyline.com)_, powered by Next.js, React, GraphQL with urql, and Bootstrap. Based on [austinsdev-web-client](https://github.com/austins/austinsdev-web-client).
 
 The goal of this project is to abstract the frontend away from WordPress, improve performance (such as time to first byte), eliminate the usage of frontend plugins that slow down WordPress, and allow further customization for the intended website.
 
@@ -10,7 +10,7 @@ Pages are statically generated at build-time except for the search page. They ma
 
 - Node.js (LTS v14.17.0 is the minimum version necessary)
 - A backend powered by WordPress with these plugins at the minimum:
-  - [WPGraphQL](https://wordpress.org/plugins/wp-graphql/), [WPGraphQL Offset Pagination](https://github.com/valu-digital/wp-graphql-offset-pagination), [Custom Post Type UI](https://wordpress.org/plugins/custom-post-type-ui/), [Advanced Custom Fields](https://wordpress.org/plugins/advanced-custom-fields/), [WPGraphQL for Advanced Custom Fields](https://github.com/wp-graphql/wp-graphql-acf), [Yoast SEO](https://wordpress.org/plugins/wordpress-seo/), [WPGraphQL Yoast SEO Addon](https://wordpress.org/plugins/add-wpgraphql-seo/), and [Disqus for Wordpress](https://wordpress.org/plugins/disqus-comment-system/). 
+  - [WPGraphQL](https://wordpress.org/plugins/wp-graphql/), [WPGraphQL Offset Pagination](https://github.com/valu-digital/wp-graphql-offset-pagination), [Custom Post Type UI](https://wordpress.org/plugins/custom-post-type-ui/), [Advanced Custom Fields](https://wordpress.org/plugins/advanced-custom-fields/), [WPGraphQL for Advanced Custom Fields](https://github.com/wp-graphql/wp-graphql-acf), [Yoast SEO](https://wordpress.org/plugins/wordpress-seo/), and [WPGraphQL Yoast SEO Addon](https://wordpress.org/plugins/add-wpgraphql-seo/). 
 
 ## Development
 

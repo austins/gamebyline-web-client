@@ -6,7 +6,7 @@ export default function HeadWithTitle({ title, noIndex, innerHTMLString, childre
     return (
         <Head>
             <title>
-                {isString(title) && title.length ? `${title} – ` : ''}
+                {isString(title) && title.length > 0 ? `${title} – ` : ''}
                 {process.env.NEXT_PUBLIC_SITE_NAME}
             </title>
 
