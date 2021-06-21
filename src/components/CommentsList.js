@@ -214,7 +214,7 @@ export default function CommentsList({ postDatabaseId, comments, latestCommentCo
                 {isLoggedIn && <div className="fst-italic">Logged in as {userData.name}.</div>}
 
                 <Form onSubmit={submitComment} id="comment-form">
-                    {userData && !isLoggedIn && (
+                    {!isLoggedIn && (
                         <Row>
                             <Form.Group as={Col} controlId="comment-form-name">
                                 <Form.Label className="text-end">Your Name</Form.Label>
