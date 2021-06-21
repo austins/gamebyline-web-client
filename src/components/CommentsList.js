@@ -20,7 +20,7 @@ function ReplyToCommentMetadata(databaseId, authorName) {
 
 export default function CommentsList({ postDatabaseId, comments, latestCommentCount, setLatestCommentCount }) {
     const { data: userData } = useSWR('/api/user', swrFetcher);
-    const isLoggedIn = has(userData, 'name');
+    const isLoggedIn = userData && has(userData, 'name');
 
     const [latestComments, setLatestComments] = useState(flattenEdges(comments));
 
