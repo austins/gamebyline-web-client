@@ -100,7 +100,6 @@ export default function CommentsList({ postDatabaseId, comments, latestCommentCo
             const avatarUrlHost = new URL(avatar.url).host;
             const siteUrlHost = new URL(process.env.NEXT_PUBLIC_SITE_URL).host;
 
-            // eslint-disable-next-line jsx-a11y/alt-text
             avatarImage = avatarUrlHost.includes(siteUrlHost) ? (
                 <Image {...avatarProps} quality={100} />
             ) : (

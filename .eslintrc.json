@@ -4,6 +4,7 @@
         "plugin:@next/next/recommended"
     ],
     "rules": {
+        "jsx-a11y/alt-text": "off",
         "no-await-in-loop": "off",
         "no-plusplus": "off",
         "no-restricted-syntax": "off",
