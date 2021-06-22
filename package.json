@@ -50,7 +50,7 @@
         "@next/eslint-plugin-next": "^11.0.0",
         "eslint": "^7.29.0",
         "eslint-config-next": "^11.0.0",
-        "next-sitemap": "^1.6.116",
+        "next-sitemap": "^1.6.121",
         "sass": "~1.32.12"
     }
 }
