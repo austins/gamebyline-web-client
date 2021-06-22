@@ -1,6 +1,6 @@
 # gamebyline-web-client
 
-The frontend for _[Game Byline](https://gamebyline.com)_, powered by Next.js, React, GraphQL with urql, and Bootstrap. Based on [austinsdev-web-client](https://github.com/austins/austinsdev-web-client).
+The frontend for _[Game Byline](https://gamebyline.com)_, powered by Next.js, React, GraphQL with graphql-request and SWR, and Bootstrap. Based on [austinsdev-web-client](https://github.com/austins/austinsdev-web-client).
 
 The goal of this project is to abstract the frontend away from WordPress, improve performance (such as time to first byte), eliminate the usage of frontend plugins that slow down WordPress, and allow further customization for the intended website.
 
