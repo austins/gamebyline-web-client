@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-function ClientApp({ Component, pageProps }) {
+export default function ClientApp({ Component, pageProps }) {
     const router = useRouter();
 
     const setGoogleAnalyticsPagePath = url => {
@@ -45,5 +45,3 @@ function ClientApp({ Component, pageProps }) {
 }
 
 Moment.globalFilter = dateStr => `${dateStr.charAt(0).toUpperCase()}${dateStr.slice(1)}`;
-
-export default ClientApp;

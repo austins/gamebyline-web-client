@@ -1,35 +1,32 @@
 import isInt from 'validator/lib/isInt';
-import { gql, useQuery } from 'urql';
-
 import Error from 'next/error';
+import { gql } from 'graphql-request';
+import useSWR from 'swr';
+import memoize from 'fast-memoize';
 import Posts from '../../../../components/Posts';
 import Breadcrumbs, { Crumb } from '../../../../components/Breadcrumbs';
 import PostsPager from '../../../../components/PostsPager';
 import HeadWithTitle from '../../../../components/HeadWithTitle';
-import { getUrqlClient, wrapUrqlClient } from '../../../../lib/data/urql';
 import LoadingSpinner from '../../../../components/LoadingSpinner';
 import { postsQuery } from '../../../../lib/data/queries';
 import { flattenEdges } from '../../../../lib/data/helpers';
+import { graphqlFetcher } from '../../../../lib/data/fetchers';
 
-const getPostsQueryVars = (slug, page) => ({
+const getPostsQueryVars = memoize((slug, page) => ({
     authorSlug: slug,
     offset: page <= 1 ? 0 : (page - 1) * process.env.NEXT_PUBLIC_POSTS_PER_PAGE,
     size: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE),
-});
+}));
 
-function AuthorByPage({ page, slug }) {
-    const [result] = useQuery({
-        query: postsQuery,
-        variables: getPostsQueryVars(slug, page),
+export default function AuthorByPage({ page, slug, initialPostsData }) {
+    const { data, error } = useSWR([postsQuery, getPostsQueryVars(slug, page)], graphqlFetcher, {
+        initialData: initialPostsData,
     });
 
-    const { data, fetching, error } = result;
-
-    if (fetching) return <LoadingSpinner />;
+    if (!error && !data) return <LoadingSpinner />;
     if (error) return <Error statusCode={500} title="Error retrieving articles" />;
 
     const posts = flattenEdges(data.posts);
-    if (!posts.length) return { notFound: true };
 
     const { hasMore, hasPrevious } = data.posts.pageInfo.offsetPagination;
 
@@ -60,50 +57,43 @@ export async function getStaticProps({ params }) {
     const { slug } = params;
     const page = params.page && isInt(params.page, { min: 1, allow_leading_zeroes: false }) ? Number(params.page) : 1;
 
-    const { urqlClient, ssrCache } = getUrqlClient();
-    await urqlClient.query(postsQuery, getPostsQueryVars(slug, page)).toPromise();
+    const initialPostsData = await graphqlFetcher(postsQuery, getPostsQueryVars(slug, page));
+    if (!initialPostsData.posts.edges.length) return { notFound: true };
 
     return {
-        props: { urqlState: ssrCache.extractData(), page, slug },
+        props: { page, slug, initialPostsData },
         revalidate: Number(process.env.REVALIDATION_IN_SECONDS),
     };
 }
 
 export async function getStaticPaths() {
-    const { urqlClient } = getUrqlClient();
-    const { data: usersData } = await urqlClient
-        .query(
-            gql`
-                query {
-                    users(first: 100, where: { hasPublishedPosts: POST }) {
-                        nodes {
-                            slug
-                        }
-                    }
+    const usersData = await graphqlFetcher(gql`
+        query {
+            users(first: 100, where: { hasPublishedPosts: POST }) {
+                nodes {
+                    slug
                 }
-            `
-        )
-        .toPromise();
+            }
+        }
+    `);
 
     const paths = [];
     const users = usersData.users.nodes;
     for (const user of users) {
-        const { data: postsData } = await urqlClient
-            .query(
-                gql`
-                    query ($authorSlug: String!, $size: Int!) {
-                        posts(where: { status: PUBLISH, authorName: $authorSlug, offsetPagination: { size: $size } }) {
-                            pageInfo {
-                                offsetPagination {
-                                    total
-                                }
+        const postsData = await graphqlFetcher(
+            gql`
+                query ($authorSlug: String!, $size: Int!) {
+                    posts(where: { status: PUBLISH, authorName: $authorSlug, offsetPagination: { size: $size } }) {
+                        pageInfo {
+                            offsetPagination {
+                                total
                             }
                         }
                     }
-                `,
-                { authorSlug: user.slug, size: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE) }
-            )
-            .toPromise();
+                }
+            `,
+            { authorSlug: user.slug, size: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE) }
+        );
 
         const totalPosts = postsData.posts.pageInfo.offsetPagination.total;
         for (let i = 1; i <= Math.ceil(totalPosts / process.env.NEXT_PUBLIC_POSTS_PER_PAGE); i++) {
@@ -113,5 +103,3 @@ export async function getStaticPaths() {
 
     return { fallback: 'blocking', paths };
 }
-
-export default wrapUrqlClient(AuthorByPage);

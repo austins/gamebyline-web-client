@@ -1,30 +1,28 @@
 import isInt from 'validator/lib/isInt';
-import { useQuery } from 'urql';
 import Error from 'next/error';
+import useSWR from 'swr';
+import memoize from 'fast-memoize';
 import Posts from '../../components/Posts';
 import PostsPager from '../../components/PostsPager';
 import Breadcrumbs, { Crumb } from '../../components/Breadcrumbs';
 import HeadWithTitle from '../../components/HeadWithTitle';
-import { getUrqlClient, wrapUrqlClient } from '../../lib/data/urql';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { postsQuery } from '../../lib/data/queries';
 import { flattenEdges } from '../../lib/data/helpers';
+import { graphqlFetcher } from '../../lib/data/fetchers';
 
-const getPostsQueryVars = (page, search) => ({
+const getPostsQueryVars = memoize((page, search) => ({
     offset: page <= 1 ? 0 : (page - 1) * process.env.NEXT_PUBLIC_POSTS_PER_PAGE,
     size: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE),
     search,
-});
+}));
 
-function PostsBySearch({ page, search }) {
-    const [result] = useQuery({
-        query: postsQuery,
-        variables: getPostsQueryVars(page, search),
+export default function PostsBySearch({ page, search, initialPostsData }) {
+    const { data, error } = useSWR([postsQuery, getPostsQueryVars(page, search)], graphqlFetcher, {
+        initialData: initialPostsData,
     });
 
-    const { data, fetching, error } = result;
-
-    if (fetching) return <LoadingSpinner />;
+    if (!error && !data) return <LoadingSpinner />;
     if (error) return <Error statusCode={500} title="Error retrieving articles" />;
 
     const posts = flattenEdges(data.posts);
@@ -63,10 +61,7 @@ export async function getServerSideProps({ query }) {
 
     const page = query.page && isInt(query.page, { min: 1, allow_leading_zeroes: false }) ? Number(query.page) : 1;
 
-    const { urqlClient, ssrCache } = getUrqlClient();
-    await urqlClient.query(postsQuery, getPostsQueryVars(page, search)).toPromise();
+    const initialPostsData = await graphqlFetcher(postsQuery, getPostsQueryVars(page, search));
 
-    return { props: { urqlState: ssrCache.extractData(), page, search } };
+    return { props: { page, search, initialPostsData } };
 }
-
-export default wrapUrqlClient(PostsBySearch);

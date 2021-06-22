@@ -1,22 +1,18 @@
-import { gql } from 'urql';
-import { getUrqlClientStandalone } from '../../lib/data/urql';
+import { gql } from 'graphql-request';
+import nc from 'next-connect';
+import { StatusCodes } from 'http-status-codes';
+import { getGraphqlClient } from '../../lib/data/fetchers';
 
-export default async function handler(req, res) {
-    if (req.method !== 'GET') return res.status(405).send();
+const handler = nc().get(async (req, res) => {
+    const userData = await getGraphqlClient(req.headers.cookie).request(gql`
+        query {
+            viewer {
+                name
+            }
+        }
+    `);
 
-    const urqlClient = getUrqlClientStandalone(true, req.headers.cookie);
+    return res.status(StatusCodes.OK).json(userData.viewer ?? {});
+});
 
-    const { data } = await urqlClient
-        .query(
-            gql`
-                query {
-                    viewer {
-                        name
-                    }
-                }
-            `
-        )
-        .toPromise();
-
-    return res.status(200).json(data.viewer ?? {});
-}
+export default handler;

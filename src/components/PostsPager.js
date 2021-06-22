@@ -22,8 +22,8 @@ export default function PostsPager({ authorSlug, categorySlug, hasMore, hasPrevi
     };
 
     if (search) {
-        paths.hasMorePath.query = { page: page + 1, search };
-        paths.hasPreviousPath.query = { page: page - 1, search };
+        paths.hasMorePath.query = { search, page: page + 1 };
+        paths.hasPreviousPath.query = { search, page: page - 1 };
     }
 
     return (

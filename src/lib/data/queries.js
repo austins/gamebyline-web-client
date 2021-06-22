@@ -1,6 +1,6 @@
-// Fragments
-import { gql } from 'urql';
+import { gql } from 'graphql-request';
 
+// Fragments
 export const commentFieldsFragment = gql`
     fragment commentFields on Comment {
         id
@@ -150,7 +150,7 @@ export const postQuery = gql`
                 edges {
                     node {
                         ...commentFields
-                        replies {
+                        replies(first: 100, where: { order: ASC, orderby: COMMENT_DATE_GMT }) {
                             edges {
                                 node {
                                     ...commentFields

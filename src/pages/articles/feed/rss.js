@@ -1,18 +1,15 @@
 import { Feed } from 'feed';
 import striptags from 'striptags';
-import { getUrqlClient, wrapUrqlClient } from '../../../lib/data/urql';
 import { postsQuery } from '../../../lib/data/queries';
 import { flattenEdges } from '../../../lib/data/helpers';
+import { graphqlFetcher } from '../../../lib/data/fetchers';
 
-function ArticlesRssFeed() {}
+export default function ArticlesRssFeed() {}
 
 export async function getServerSideProps({ req, res }) {
-    const { urqlClient } = getUrqlClient();
-    const { data } = await urqlClient
-        .query(postsQuery, { size: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE) })
-        .toPromise();
+    const postsData = await graphqlFetcher(postsQuery, { size: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE) });
 
-    const posts = flattenEdges(data.posts);
+    const posts = flattenEdges(postsData.posts);
     const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
     const siteLink =
         process.env.NEXT_PUBLIC_SITE_URL ?? `${req.headers['x-forwarded-proto'] ?? 'http'}://${req.headers.host}`;
@@ -46,5 +43,3 @@ export async function getServerSideProps({ req, res }) {
 
     return { props: {} };
 }
-
-export default wrapUrqlClient(ArticlesRssFeed);

@@ -1,34 +1,32 @@
 import isInt from 'validator/lib/isInt';
-import { useQuery } from 'urql';
 import { faClock, faComments, faTag, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Moment from 'react-moment';
 import Link from 'next/link';
 import { Link as LinkScroll } from 'react-scroll';
-import { useState } from 'react';
 import { SRLWrapper } from 'simple-react-lightbox';
 import Image from 'next/image';
 import Error from 'next/error';
 import has from 'lodash/has';
+import { gql } from 'graphql-request';
+import useSWR from 'swr';
+import memoize from 'fast-memoize';
 import HeadWithTitle from '../../../components/HeadWithTitle';
 import styles from '../../../styles/Post.module.scss';
 import CommentsList from '../../../components/CommentsList';
-import { getUrqlClient, wrapUrqlClient } from '../../../lib/data/urql';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import { postQuery } from '../../../lib/data/queries';
+import { graphqlFetcher } from '../../../lib/data/fetchers';
 
-const getPostQueryVars = slug => ({ slug });
+const getPostQueryVars = memoize(slug => ({ slug }));
 
-function Post({ year, slug, commentCount }) {
-    // We use state for comment count here and comments in CommentsList
-    // instead of re-execute function from useQuery to prevent flashing/reload of the page.
-    const [latestCommentCount, setLatestCommentCount] = useState(commentCount);
+export default function Post({ year, slug, initialPostData }) {
+    const { data, error, mutate } = useSWR([postQuery, getPostQueryVars(slug)], graphqlFetcher, {
+        initialData: initialPostData,
+        revalidateOnMount: true, // Since we have Incremental Static Regeneration, the page may be cached, so we should refetch the latest comments data.
+    });
 
-    const [result] = useQuery({ query: postQuery, variables: getPostQueryVars(slug) });
-
-    const { data, fetching, error } = result;
-
-    if (fetching) return <LoadingSpinner />;
+    if (!error && !data) return <LoadingSpinner />;
     if (error) return <Error statusCode={500} title="Error retrieving articles" />;
 
     const post = data.postBy;
@@ -77,8 +75,8 @@ function Post({ year, slug, commentCount }) {
                         <span>
                             <FontAwesomeIcon icon={faComments} />
                             <LinkScroll href="#comments" to="comments" smooth duration={100}>
-                                {latestCommentCount > 0 && `${latestCommentCount} `}
-                                {latestCommentCount === 1 ? 'Comment' : 'Comments'}
+                                {post.commentCount > 0 && `${post.commentCount} `}
+                                {post.commentCount === 1 ? 'Comment' : 'Comments'}
                             </LinkScroll>
                         </span>
                     </div>
@@ -155,49 +153,33 @@ function Post({ year, slug, commentCount }) {
             <section id="comments">
                 <h3>Comments</h3>
 
-                <CommentsList
-                    postDatabaseId={post.databaseId}
-                    comments={post.comments}
-                    latestCommentCount={latestCommentCount}
-                    setLatestCommentCount={setLatestCommentCount}
-                />
+                <CommentsList postData={data} postMutate={mutate} />
             </section>
         </div>
     );
 }
 
-export async function getServerSideProps({ params }) {
-    // We use getServerSideProps to ensure that the latest comment count and comments appear
-    // and depend on the urql cache for query speed. If Next.js implements on-demand invalidation of pages,
-    // we can switch to getStaticProps and we can add revalidate here.
-
+export async function getStaticProps({ params }) {
     const { slug, year } = params;
 
-    const { urqlClient, ssrCache } = getUrqlClient();
-    const { data } = await urqlClient.query(postQuery, getPostQueryVars(slug)).toPromise();
+    const initialPostData = await graphqlFetcher(postQuery, getPostQueryVars(slug));
+    if (!has(initialPostData, 'postBy.id')) return { notFound: true };
 
-    if (!has(data, 'postBy.commentCount')) return { notFound: true };
-
-    return { props: { urqlState: ssrCache.extractData(), year, slug, commentCount: data.postBy.commentCount } };
+    return { props: { year, slug, initialPostData }, revalidate: Number(process.env.REVALIDATION_IN_SECONDS) };
 }
 
-/* export async function getStaticPaths() {
-    const { urqlClient } = getUrqlClient();
-    const { data } = await urqlClient
-        .query(
-            gql`
-                query {
-                    posts(first: 100, where: { status: PUBLISH }) {
-                        nodes {
-                            uri
-                        }
-                    }
+export async function getStaticPaths() {
+    const postsData = await graphqlFetcher(gql`
+        query {
+            posts(first: 100, where: { status: PUBLISH }) {
+                nodes {
+                    uri
                 }
-            `
-        )
-        .toPromise();
+            }
+        }
+    `);
 
-    const posts = data.posts.nodes;
+    const posts = postsData.posts.nodes;
 
     const paths = posts.map(post => {
         const pathSplit = post.uri.split('/');
@@ -210,6 +192,4 @@ export async function getServerSideProps({ params }) {
     });
 
     return { fallback: 'blocking', paths };
-} */
-
-export default wrapUrqlClient(Post);
+}

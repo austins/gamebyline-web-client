@@ -1,24 +1,38 @@
-import { gql, useQuery } from 'urql';
 import Error from 'next/error';
+import useSWR from 'swr';
+import { gql } from 'graphql-request';
+import memoize from 'fast-memoize';
 import HeadWithTitle from '../components/HeadWithTitle';
-import CsgoCrosshairs from '../components/CsgoCrosshairs';
 import styles from '../styles/Page.module.scss';
-import { getUrqlClient, wrapUrqlClient } from '../lib/data/urql';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { csgoCrosshairsQuery, pageQuery } from '../lib/data/queries';
+import { pageQuery, csgoCrosshairsQuery } from '../lib/data/queries';
+import { graphqlFetcher } from '../lib/data/fetchers';
+import CsgoCrosshairs from '../components/CsgoCrosshairs';
 
 const csgoCrosshairsSlug = 'csgo-crosshairs';
-const getPageQueryVars = slug => ({ slug });
+const getPageQueryVars = memoize(slug => ({ slug }));
 
-function Page({ slug, csgoCrosshairs }) {
-    const [result] = useQuery({ query: pageQuery, variables: getPageQueryVars(slug) });
-    const { data, fetching, error } = result;
+export default function Page({ slug, initialPageData, initialCsgoCrosshairsData }) {
+    const { data: pageData, error: pageError } = useSWR([pageQuery, getPageQueryVars(slug)], graphqlFetcher, {
+        initialData: initialPageData,
+    });
 
-    if (fetching) return <LoadingSpinner />;
-    if (error) return <Error statusCode={500} title="Error retrieving page" />;
+    const { data: csgoCrosshairsData, error: csgoCrosshairsError } = useSWR(
+        slug === csgoCrosshairsSlug ? csgoCrosshairsQuery : null,
+        graphqlFetcher,
+        { initialData: initialCsgoCrosshairsData }
+    );
 
-    const page = data.pageBy;
-    if (!page) return <Error statusCode={404} title="Page not found" />;
+    if ((!pageError && !pageData) || (slug === csgoCrosshairsSlug && !csgoCrosshairsError && !csgoCrosshairsData))
+        return <LoadingSpinner />;
+
+    if (pageError || csgoCrosshairsError) return <Error statusCode={500} title="Error retrieving page" />;
+
+    const page = pageData.pageBy;
+
+    let csgoCrosshairs = null;
+    if (csgoCrosshairsData && csgoCrosshairsData.csgoCrosshairs.nodes.length)
+        csgoCrosshairs = csgoCrosshairsData.csgoCrosshairs.nodes;
 
     return (
         <div>
@@ -39,41 +53,32 @@ function Page({ slug, csgoCrosshairs }) {
 export async function getStaticProps({ params }) {
     const { slug } = params;
 
-    const { urqlClient, ssrCache } = getUrqlClient();
+    const initialPageData = await graphqlFetcher(pageQuery, getPageQueryVars(slug));
 
-    await urqlClient.query(pageQuery, getPageQueryVars(slug)).toPromise();
+    if (!initialPageData.pageBy) return { notFound: true };
 
-    // If portfolio page, get projects.
-    let csgoCrosshairs = null;
-    if (slug === csgoCrosshairsSlug) {
-        const { data: csgoCrosshairsData } = await urqlClient.query(csgoCrosshairsQuery).toPromise();
-        if (csgoCrosshairsData && csgoCrosshairsData.csgoCrosshairs.nodes.length)
-            csgoCrosshairs = csgoCrosshairsData.csgoCrosshairs.nodes;
-    }
+    // If csgo-crosshairs page, get CS:GO crosshairs.
+    let initialCsgoCrosshairsData = null;
+    if (slug === csgoCrosshairsSlug) initialCsgoCrosshairsData = await graphqlFetcher(csgoCrosshairsQuery);
 
     return {
-        props: { urqlState: ssrCache.extractData(), slug, csgoCrosshairs },
+        props: { slug, initialPageData, initialCsgoCrosshairsData },
         revalidate: Number(process.env.REVALIDATION_IN_SECONDS),
     };
 }
 
 export async function getStaticPaths() {
-    const { urqlClient } = getUrqlClient();
-    const { data } = await urqlClient
-        .query(
-            gql`
-                query {
-                    pages(first: 100, where: { status: PUBLISH }) {
-                        nodes {
-                            slug
-                        }
-                    }
+    const pageData = await graphqlFetcher(gql`
+        query {
+            pages(first: 100, where: { status: PUBLISH }) {
+                nodes {
+                    slug
                 }
-            `
-        )
-        .toPromise();
+            }
+        }
+    `);
 
-    const pages = data.pages.nodes;
+    const pages = pageData.pages.nodes;
 
     const paths = pages.map(page => ({
         params: { slug: page.slug },
@@ -81,5 +86,3 @@ export async function getStaticPaths() {
 
     return { fallback: 'blocking', paths };
 }
-
-export default wrapUrqlClient(Page);

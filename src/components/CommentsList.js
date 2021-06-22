@@ -8,21 +8,22 @@ import { faClock, faReply } from '@fortawesome/free-solid-svg-icons';
 import Moment from 'react-moment';
 import { Alert, Button, Col, Form, Row } from 'react-bootstrap';
 import { Link as LinkScroll } from 'react-scroll';
+import cloneDeep from 'lodash/cloneDeep';
 import defaultAvatar from '../../public/assets/images/default-comment-avatar.jpg';
 import styles from '../styles/CommentsList.module.scss';
 import { flattenEdges } from '../lib/data/helpers';
-import { swrFetcher } from '../lib/data/swr';
+import { apiFetcher } from '../lib/data/fetchers';
 
 function ReplyToCommentMetadata(databaseId, authorName) {
     this.databaseId = databaseId;
     this.authorName = authorName;
 }
 
-export default function CommentsList({ postDatabaseId, comments, latestCommentCount, setLatestCommentCount }) {
-    const { data: userData } = useSWR('/api/user', swrFetcher);
+export default function CommentsList({ postData, postMutate }) {
+    const { data: userData } = useSWR('/api/user', apiFetcher);
     const isLoggedIn = userData && has(userData, 'name');
 
-    const [latestComments, setLatestComments] = useState(flattenEdges(comments));
+    const displayedComments = flattenEdges(postData.postBy.comments);
 
     // Submit comment form handler.
     const [replyToCommentMetadata, setReplyToCommentMetadata] = useState(null);
@@ -40,7 +41,7 @@ export default function CommentsList({ postDatabaseId, comments, latestCommentCo
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                commentOnDatabaseId: postDatabaseId,
+                commentOnDatabaseId: postData.postBy.databaseId,
                 author: isLoggedIn ? null : commentFormName,
                 authorEmail: isLoggedIn ? null : commentFormEmail,
                 content: commentFormMessage.trim(),
@@ -61,25 +62,23 @@ export default function CommentsList({ postDatabaseId, comments, latestCommentCo
                 setCommentFormMessage('');
 
                 if (data.success) {
-                    await setLatestCommentCount(latestCommentCount + 1);
-
+                    const postDataCopy = cloneDeep(postData);
+                    postDataCopy.postBy.commentCount = postDataCopy.postBy.commentCount + 1;
                     const { comment } = data;
                     if (!comment.parentId) {
-                        await setLatestComments([...latestComments, comment]);
+                        postDataCopy.postBy.comments.edges.push({ node: comment });
                     } else {
-                        const latestCommentsCopy = [...latestComments];
-                        const parentCommentIndex = latestCommentsCopy.findIndex(c => c.id === comment.parentId);
-                        latestCommentsCopy[parentCommentIndex].replies.edges.push({ node: comment });
-                        await setLatestComments(latestCommentsCopy);
+                        const parentCommentIndex = postDataCopy.postBy.comments.edges.findIndex(
+                            c => c.node.id === comment.parentId
+                        );
+                        postDataCopy.postBy.comments.edges[parentCommentIndex].node.replies.edges.push({
+                            node: comment,
+                        });
                     }
-
+                    postMutate(postDataCopy, false);
                     setSubmitCommentId(comment.id);
                     setSubmitCommentSuccess(true);
                 }
-            })
-            .catch(() => {
-                setSubmitCommentError('There was an error posting your comment. Please try again.');
-                setSubmitCommentSuccess(false);
             });
     };
 
@@ -188,7 +187,7 @@ export default function CommentsList({ postDatabaseId, comments, latestCommentCo
 
     return (
         <>
-            <div>{latestComments.length > 0 && latestComments.map(comment => renderComment(comment, 1))}</div>
+            <div>{displayedComments.length > 0 && displayedComments.map(comment => renderComment(comment, 1))}</div>
 
             <div className="mt-3">
                 <h4>

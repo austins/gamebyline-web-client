@@ -8,6 +8,7 @@
         "no-await-in-loop": "off",
         "no-plusplus": "off",
         "no-restricted-syntax": "off",
+        "operator-assignment": "warn",
         "sort-keys": "off"
     }
 }

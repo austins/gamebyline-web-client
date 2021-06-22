@@ -1,15 +1,16 @@
-import { gql } from 'urql';
 import he from 'he';
-import { getUrqlClientStandalone } from '../../../lib/data/urql';
+import { gql } from 'graphql-request';
+import has from 'lodash/has';
+import nc from 'next-connect';
+import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 import { commentFieldsFragment } from '../../../lib/data/queries';
+import { getGraphqlClient } from '../../../lib/data/fetchers';
 
-export default async function handler(req, res) {
-    if (req.method !== 'POST') return res.status(405).send();
-    if (!req.body) return res.status(400).send();
+const handler = nc().post(async (req, res) => {
+    if (!req.body) return res.status(StatusCodes.BAD_REQUEST).send(ReasonPhrases.BAD_REQUEST);
 
-    const urqlClient = getUrqlClientStandalone(true, req.headers.cookie);
-    const { data, error } = await urqlClient
-        .mutation(
+    try {
+        const commentData = await getGraphqlClient(req.headers.cookie).request(
             gql`
                 ${commentFieldsFragment}
 
@@ -43,10 +44,18 @@ export default async function handler(req, res) {
                 authorEmail: req.body.authorEmail ?? null,
                 parentDatabaseId: req.body.parentDatabaseId ?? null,
             }
-        )
-        .toPromise();
+        );
 
-    if (error) return res.status(500).json({ error: { message: he.decode(error.graphQLErrors[0].message) } });
+        return res.status(StatusCodes.OK).json(commentData.createComment);
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            error: {
+                message: has(error, 'response.errors[0].message')
+                    ? he.decode(error.response.errors[0].message)
+                    : 'There was an error posting your comment. Please try again.',
+            },
+        });
+    }
+});
 
-    return res.status(200).json(data.createComment);
-}
+export default handler;

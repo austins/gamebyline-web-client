@@ -1,29 +1,25 @@
-import { useQuery } from 'urql';
 import Error from 'next/error';
+import useSWR from 'swr';
+import memoize from 'fast-memoize';
 import Posts from '../components/Posts';
 import PostsPager from '../components/PostsPager';
 import HeadWithTitle from '../components/HeadWithTitle';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { getUrqlClient, wrapUrqlClient } from '../lib/data/urql';
 import { postsQuery } from '../lib/data/queries';
 import { flattenEdges } from '../lib/data/helpers';
+import { graphqlFetcher } from '../lib/data/fetchers';
 
-const getPostsQueryVars = () => ({ size: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE) });
+const getPostsQueryVars = memoize(() => ({ size: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE) }));
 
-function Home() {
-    const [result] = useQuery({
-        query: postsQuery,
-        variables: getPostsQueryVars(),
+export default function Home({ initialPostsData }) {
+    const { data, error } = useSWR([postsQuery, getPostsQueryVars()], graphqlFetcher, {
+        initialData: initialPostsData,
     });
 
-    const { data, fetching, error } = result;
-
-    if (fetching) return <LoadingSpinner />;
+    if (!error && !data) return <LoadingSpinner />;
     if (error) return <Error statusCode={500} title="Error retrieving articles" />;
 
     const posts = flattenEdges(data.posts);
-    if (!posts.length) return <Error statusCode={404} title="Articles not found" />;
-
     const { hasMore, hasPrevious } = data.posts.pageInfo.offsetPagination;
 
     return (
@@ -38,13 +34,12 @@ function Home() {
 }
 
 export async function getStaticProps() {
-    const { urqlClient, ssrCache } = getUrqlClient();
-    await urqlClient.query(postsQuery, getPostsQueryVars()).toPromise();
+    const initialPostsData = await graphqlFetcher(postsQuery, getPostsQueryVars());
+
+    if (!initialPostsData.posts.edges.length) return { notFound: true };
 
     return {
-        props: { urqlState: ssrCache.extractData() },
+        props: { initialPostsData },
         revalidate: Number(process.env.REVALIDATION_IN_SECONDS),
     };
 }
-
-export default wrapUrqlClient(Home);

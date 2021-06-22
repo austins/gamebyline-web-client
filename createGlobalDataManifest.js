@@ -1,11 +1,9 @@
 /* eslint-disable no-console */
 const { loadEnvConfig } = require('@next/env');
-// eslint-disable-next-line no-unused-vars
-const fetch = require('isomorphic-unfetch'); // fetch required for urql
-const { createClient, gql } = require('urql');
-const { writeFile } = require('fs').promises;
-const path = require('path');
+const { request, gql } = require('graphql-request');
 const has = require('lodash/has');
+const path = require('path');
+const { writeFile } = require('fs').promises;
 
 const projectDir = process.cwd();
 
@@ -14,33 +12,30 @@ loadEnvConfig(projectDir);
 
 // Run.
 (async () => {
-    const urqlClient = createClient({ url: process.env.NEXT_PUBLIC_API_GRAPHQL_URL });
-
     // Initialize global data manifest object.
     const globalDataManifest = {};
 
     // Get header menu.
     try {
-        const { data } = await urqlClient
-            .query(
-                gql`
-                    query {
-                        menus(where: { slug: "header" }) {
-                            nodes {
-                                menuItems(first: 100) {
-                                    nodes {
-                                        key: id
-                                        parentId
-                                        title: label
-                                        url
-                                    }
+        const data = await request(
+            process.env.NEXT_PUBLIC_API_GRAPHQL_URL,
+            gql`
+                query {
+                    menus(where: { slug: "header" }) {
+                        nodes {
+                            menuItems(first: 100) {
+                                nodes {
+                                    key: id
+                                    parentId
+                                    title: label
+                                    url
                                 }
                             }
                         }
                     }
-                `
-            )
-            .toPromise();
+                }
+            `
+        );
 
         if (has(data, 'menus.nodes[0].menuItems.nodes'))
             globalDataManifest.headerMenuItems = data.menus.nodes[0].menuItems.nodes;
