@@ -20,7 +20,7 @@
         "@fortawesome/free-solid-svg-icons": "^5.15.3",
         "@fortawesome/react-fontawesome": "^0.1.14",
         "@next/env": "^11.0.1",
-        "bootstrap": "^5.0.1",
+        "bootstrap": "^5.0.2",
         "bootswatch": "^5.0.2",
         "fast-memoize": "^2.5.2",
         "feed": "^4.2.2",
