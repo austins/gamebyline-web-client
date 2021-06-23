@@ -28,7 +28,7 @@ export default function ClientApp({ Component, pageProps }) {
         return () => router.events.off('routeChangeComplete', handleRouteChangeComplete);
     }, [router]);
 
-    // Disable revalidate on focus since we don't need it now (ISG is suitable) and to reduce API calls.
+    // Disable revalidate on focus by default since we don't need it now (ISG is suitable) and to reduce API calls.
     // If we later want to make the site more dynamic, we can enable revalidateOnFocus.
     const swrConfig = { revalidateOnFocus: false };
 

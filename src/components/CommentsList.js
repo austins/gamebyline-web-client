@@ -20,7 +20,7 @@ function ReplyToCommentMetadata(databaseId, authorName) {
 }
 
 export default function CommentsList({ postData, postMutate }) {
-    const { data: userData } = useSWR('/api/user', apiFetcher);
+    const { data: userData } = useSWR('/api/user', apiFetcher, { revalidateOnFocus: true });
     const isLoggedIn = userData && has(userData, 'name');
 
     const displayedComments = flattenEdges(postData.postBy.comments);
