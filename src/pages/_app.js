@@ -5,6 +5,7 @@ import Moment from 'react-moment';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import { SWRConfig } from 'swr';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
@@ -27,20 +28,26 @@ export default function ClientApp({ Component, pageProps }) {
         return () => router.events.off('routeChangeComplete', handleRouteChangeComplete);
     }, [router]);
 
+    // Disable revalidate on focus since we don't need it now (ISG is suitable) and to reduce API calls.
+    // If we later want to make the site more dynamic, we can enable revalidateOnFocus.
+    const swrConfig = { revalidateOnFocus: false };
+
     return (
-        <SimpleReactLightbox>
-            <Header />
+        <SWRConfig value={swrConfig}>
+            <SimpleReactLightbox>
+                <Header />
 
-            <main id="main">
-                <div id="main-inner" className="py-3">
-                    <Container id="main-container">
-                        <Component {...pageProps} />
-                    </Container>
-                </div>
-            </main>
+                <main id="main">
+                    <div id="main-inner" className="py-3">
+                        <Container id="main-container">
+                            <Component {...pageProps} />
+                        </Container>
+                    </div>
+                </main>
 
-            <Footer />
-        </SimpleReactLightbox>
+                <Footer />
+            </SimpleReactLightbox>
+        </SWRConfig>
     );
 }
 

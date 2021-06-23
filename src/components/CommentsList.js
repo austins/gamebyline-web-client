@@ -8,7 +8,7 @@ import { faClock, faReply } from '@fortawesome/free-solid-svg-icons';
 import Moment from 'react-moment';
 import { Alert, Button, Col, Form, Row } from 'react-bootstrap';
 import { Link as LinkScroll } from 'react-scroll';
-import cloneDeep from 'lodash/cloneDeep';
+import rfdc from 'rfdc';
 import defaultAvatar from '../../public/assets/images/default-comment-avatar.jpg';
 import styles from '../styles/CommentsList.module.scss';
 import { flattenEdges } from '../lib/data/helpers';
@@ -62,7 +62,7 @@ export default function CommentsList({ postData, postMutate }) {
                 setCommentFormMessage('');
 
                 if (data.success) {
-                    const postDataCopy = cloneDeep(postData);
+                    const postDataCopy = rfdc({ proto: true })(postData);
                     postDataCopy.postBy.commentCount = postDataCopy.postBy.commentCount + 1;
                     const { comment } = data;
                     if (!comment.parentId) {
