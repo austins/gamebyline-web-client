@@ -46,7 +46,7 @@
     },
     "devDependencies": {
         "@ijsto/eslint-config": "^4.1.6",
-        "@next/eslint-plugin-next": "^11.0.0",
+        "@next/eslint-plugin-next": "^11.0.1",
         "eslint": "^7.29.0",
         "eslint-config-next": "^11.0.0",
         "next-sitemap": "^1.6.121",
