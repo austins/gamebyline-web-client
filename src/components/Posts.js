@@ -18,7 +18,7 @@ export default function Posts({ authorName, categoryName, posts, search }) {
                     const link = `/article/${date.getUTCFullYear()}/${post.slug}`;
 
                     return (
-                        <Col key={post.id} xs="auto">
+                        <Col key={post.id}>
                             <Link href={link} passHref>
                                 <a className={styles.postCardLink}>
                                     <Card className={styles.postCard}>
