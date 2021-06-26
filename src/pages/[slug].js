@@ -1,33 +1,13 @@
-import Error from 'next/error';
-import useSWR from 'swr';
 import { gql } from 'graphql-request';
-import memoize from 'fast-memoize';
 import HeadWithTitle from '../components/HeadWithTitle';
 import styles from '../styles/Page.module.scss';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { pageQuery, csgoCrosshairsQuery } from '../lib/data/queries';
+import { csgoCrosshairsQuery, pageQuery } from '../lib/data/queries';
 import { graphqlFetcher } from '../lib/data/fetchers';
 import CsgoCrosshairs from '../components/CsgoCrosshairs';
 
 const csgoCrosshairsSlug = 'csgo-crosshairs';
-const getPageQueryVars = memoize(slug => ({ slug }));
 
-export default function Page({ slug, initialPageData, initialCsgoCrosshairsData }) {
-    const { data: pageData, error: pageError } = useSWR([pageQuery, getPageQueryVars(slug)], graphqlFetcher, {
-        initialData: initialPageData,
-    });
-
-    const { data: csgoCrosshairsData, error: csgoCrosshairsError } = useSWR(
-        slug === csgoCrosshairsSlug ? csgoCrosshairsQuery : null,
-        graphqlFetcher,
-        { initialData: initialCsgoCrosshairsData }
-    );
-
-    if ((!pageError && !pageData) || (slug === csgoCrosshairsSlug && !csgoCrosshairsError && !csgoCrosshairsData))
-        return <LoadingSpinner />;
-
-    if (pageError || csgoCrosshairsError) return <Error statusCode={500} title="Error retrieving page" />;
-
+export default function Page({ pageData, csgoCrosshairsData }) {
     const page = pageData.pageBy;
 
     let csgoCrosshairs = null;
@@ -53,16 +33,16 @@ export default function Page({ slug, initialPageData, initialCsgoCrosshairsData 
 export async function getStaticProps({ params }) {
     const { slug } = params;
 
-    const initialPageData = await graphqlFetcher(pageQuery, getPageQueryVars(slug));
+    const pageData = await graphqlFetcher(pageQuery, { slug });
 
-    if (!initialPageData.pageBy) return { notFound: true };
+    if (!pageData.pageBy) return { notFound: true };
 
     // If csgo-crosshairs page, get CS:GO crosshairs.
-    let initialCsgoCrosshairsData = null;
-    if (slug === csgoCrosshairsSlug) initialCsgoCrosshairsData = await graphqlFetcher(csgoCrosshairsQuery);
+    let csgoCrosshairsData = null;
+    if (slug === csgoCrosshairsSlug) csgoCrosshairsData = await graphqlFetcher(csgoCrosshairsQuery);
 
     return {
-        props: { slug, initialPageData, initialCsgoCrosshairsData },
+        props: { slug, pageData, csgoCrosshairsData },
         revalidate: Number(process.env.REVALIDATION_IN_SECONDS),
     };
 }
