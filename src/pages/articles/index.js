@@ -11,16 +11,14 @@ import { postsQuery } from '../../lib/data/queries';
 import { flattenEdges } from '../../lib/data/helpers';
 import { graphqlFetcher } from '../../lib/data/fetchers';
 
-const getPostsQueryVars = memoize((page, search) => ({
+const getPostsQueryVars = memoize((search, page) => ({
     offset: page <= 1 ? 0 : (page - 1) * process.env.NEXT_PUBLIC_POSTS_PER_PAGE,
     size: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE),
     search,
 }));
 
-export default function PostsBySearch({ page, search, initialPostsData }) {
-    const { data, error } = useSWR([postsQuery, getPostsQueryVars(page, search)], graphqlFetcher, {
-        initialData: initialPostsData,
-    });
+export default function PostsBySearch({ search, page }) {
+    const { data, error } = useSWR([postsQuery, getPostsQueryVars(search, page)], graphqlFetcher);
 
     if (!error && !data) return <LoadingSpinner />;
     if (error) return <Error statusCode={500} title="Error retrieving articles" />;
@@ -61,7 +59,5 @@ export async function getServerSideProps({ query }) {
 
     const page = query.page && isInt(query.page, { min: 1, allow_leading_zeroes: false }) ? Number(query.page) : 1;
 
-    const initialPostsData = await graphqlFetcher(postsQuery, getPostsQueryVars(page, search));
-
-    return { props: { page, search, initialPostsData } };
+    return { props: { search, page } };
 }
