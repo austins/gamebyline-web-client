@@ -3,8 +3,8 @@ import { gql } from 'graphql-request';
 import has from 'lodash/has';
 import nc from 'next-connect';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
-import { commentFieldsFragment } from '../../../lib/data/queries';
-import { getGraphqlClient } from '../../../lib/data/fetchers';
+import { commentFieldsFragment } from '../../lib/data/queries';
+import { getGraphqlClient } from '../../lib/data/fetchers';
 
 const handler = nc().post(async (req, res) => {
     if (!req.body) return res.status(StatusCodes.BAD_REQUEST).send(ReasonPhrases.BAD_REQUEST);
