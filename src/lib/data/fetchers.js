@@ -2,7 +2,7 @@ import { GraphQLClient, request } from 'graphql-request';
 import isString from 'lodash/isString';
 import set from 'lodash/set';
 
-export const apiFetcher = url => fetch(url).then(res => res.json());
+export const restFetcher = url => fetch(url).then(res => res.json());
 
 export const graphqlFetcher = (query, variables = {}) =>
     request(process.env.NEXT_PUBLIC_API_GRAPHQL_URL, query, variables);

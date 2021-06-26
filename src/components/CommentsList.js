@@ -12,7 +12,7 @@ import rfdc from 'rfdc';
 import defaultAvatar from '../../public/assets/images/default-comment-avatar.jpg';
 import styles from '../styles/CommentsList.module.scss';
 import { flattenEdges } from '../lib/data/helpers';
-import { apiFetcher } from '../lib/data/fetchers';
+import { restFetcher } from '../lib/data/fetchers';
 
 function ReplyToCommentMetadata(databaseId, authorName) {
     this.databaseId = databaseId;
@@ -20,7 +20,7 @@ function ReplyToCommentMetadata(databaseId, authorName) {
 }
 
 export default function CommentsList({ postData, postMutate }) {
-    const { data: userData } = useSWR('/api/user', apiFetcher, { revalidateOnFocus: true });
+    const { data: userData } = useSWR('/api/user', restFetcher, { revalidateOnFocus: true });
     const isLoggedIn = userData && has(userData, 'name');
 
     const displayedComments = flattenEdges(postData.postBy.comments);
