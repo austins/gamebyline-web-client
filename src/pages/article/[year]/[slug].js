@@ -36,7 +36,7 @@ export default function Post({ year, slug, initialPostData }) {
         !isInt(year, { allow_leading_zeroes: false }) ||
         new Date(`${post.dateGmt}Z`).getUTCFullYear() !== Number.parseInt(year, 10)
     ) {
-        return <Error statusCode={404} title="Article not found" />;
+        return <Error statusCode={404} title="This page could not be found" />;
     }
 
     return (
