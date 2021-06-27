@@ -4,6 +4,8 @@ module.exports = {
             new URL(process.env.NEXT_PUBLIC_SITE_URL).host,
             new URL(process.env.NEXT_PUBLIC_API_GRAPHQL_URL).host,
         ],
+        deviceSizes: [540, 720, 960, 1140],
+        imageSizes: [16, 32, 64, 128],
     },
     webpack: config => {
         config.module.rules.push({
