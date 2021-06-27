@@ -26,28 +26,21 @@ export default function Comments({ postData, postMutate }) {
         const isChildComment = level > 1;
         const author = comment.author.node;
 
-        // Get avatar image.
-        const avatarProps = { src: defaultAvatar, alt: author.name };
-        let avatarImage = <Image {...avatarProps} quality={100} />;
+        // Get avatar image props.
+        const avatarProps = { src: defaultAvatar, alt: author.name, quality: 100 };
         if (has(author, 'avatar')) {
             const { avatar } = author;
 
             avatarProps.src = avatar.url;
             avatarProps.width = avatar.width;
             avatarProps.height = avatar.height;
-
-            const avatarUrlHost = new URL(avatar.url).host;
-            const siteUrlHost = new URL(process.env.NEXT_PUBLIC_SITE_URL).host;
-
-            avatarImage = avatarUrlHost.includes(siteUrlHost) ? (
-                <Image {...avatarProps} quality={100} />
-            ) : (
-                <img {...avatarProps} />
+            avatarProps.unoptimized = !new URL(avatar.url).host.includes(
+                new URL(process.env.NEXT_PUBLIC_SITE_URL).host
             );
         }
 
         const getAuthorLink = showAvatar => {
-            const authorLinkDisplay = showAvatar ? avatarImage : author.name;
+            const authorLinkDisplay = showAvatar ? <Image {...avatarProps} /> : author.name;
 
             if (has(author, 'slug') && has(author, 'posts.nodes[0].id')) {
                 return (

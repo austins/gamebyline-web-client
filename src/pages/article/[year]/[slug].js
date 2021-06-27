@@ -128,6 +128,11 @@ export default function Post({ year, slug, initialPostData }) {
                                                 height={post.author.node.avatar.height}
                                                 alt={post.author.node.name}
                                                 quality={100}
+                                                unoptimized={
+                                                    !new URL(post.author.node.avatar.url).host.includes(
+                                                        new URL(process.env.NEXT_PUBLIC_SITE_URL).host
+                                                    )
+                                                }
                                             />
                                         </a>
                                     </Link>
