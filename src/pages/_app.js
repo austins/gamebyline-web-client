@@ -4,10 +4,11 @@ import { Container } from 'react-bootstrap';
 import Moment from 'react-moment';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { SWRConfig } from 'swr';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function ClientApp({ Component, pageProps }) {
     const router = useRouter();
@@ -20,12 +21,27 @@ export default function ClientApp({ Component, pageProps }) {
         }
     };
 
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
-        const handleRouteChangeComplete = url => setGoogleAnalyticsPagePath(url);
+        const handleRouteChangeStart = () => setLoading(true);
 
+        const handleRouteChangeComplete = url => {
+            setLoading(false);
+            setGoogleAnalyticsPagePath(url);
+        };
+
+        const handleRouteChangeError = () => setLoading(false);
+
+        router.events.on('routeChangeStart', handleRouteChangeStart);
         router.events.on('routeChangeComplete', handleRouteChangeComplete);
+        router.events.on('routeChangeError', handleRouteChangeError);
 
-        return () => router.events.off('routeChangeComplete', handleRouteChangeComplete);
+        return () => {
+            router.events.off('routeChangeStart', handleRouteChangeStart);
+            router.events.off('routeChangeComplete', handleRouteChangeComplete);
+            router.events.off('routeChangeError', handleRouteChangeError);
+        };
     }, [router]);
 
     // Disable revalidate on focus by default since we don't need it now (ISG is suitable) and to reduce API calls.
@@ -40,7 +56,7 @@ export default function ClientApp({ Component, pageProps }) {
                 <main id="main">
                     <div id="main-inner" className="py-3">
                         <Container id="main-container">
-                            <Component {...pageProps} />
+                            {(loading && <LoadingSpinner />) || <Component {...pageProps} />}
                         </Container>
                     </div>
                 </main>

@@ -1,9 +1,10 @@
 import { gql } from 'graphql-request';
+import { getPlaiceholder } from 'plaiceholder';
 import Posts from '../../../components/Posts';
 import PostsPager from '../../../components/PostsPager';
 import HeadWithTitle from '../../../components/HeadWithTitle';
 import { postsQuery } from '../../../lib/data/queries';
-import { flattenEdges } from '../../../lib/data/helpers';
+import { flattenEdges, generateFeaturedImagePlaceholders } from '../../../lib/data/helpers';
 import { graphqlFetcher } from '../../../lib/data/fetchers';
 
 export default function Author({ page, slug, postsData }) {
@@ -33,6 +34,8 @@ export async function getStaticProps({ params }) {
     });
 
     if (!postsData.posts.edges.length) return { notFound: true };
+
+    await generateFeaturedImagePlaceholders(getPlaiceholder, postsData.posts.edges);
 
     return {
         props: { page, slug, postsData },

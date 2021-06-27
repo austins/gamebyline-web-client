@@ -1,3 +1,5 @@
+import { has } from 'lodash';
+
 export function flattenEdges(data) {
     return data.edges.reduce((accumulator, obj) => {
         accumulator.push(obj.node);
@@ -33,4 +35,14 @@ export function mapMenuItemsChildrenToParents(menuItemsNodes) {
     });
 
     return tree;
+}
+
+export async function generateFeaturedImagePlaceholders(getPlaiceholder, postsEdges) {
+    for (const edge of postsEdges) {
+        const post = edge.node;
+        if (has(post, 'featuredImage.node.mediaItemUrl')) {
+            const { base64 } = await getPlaiceholder(post.featuredImage.node.mediaItemUrl);
+            post.featuredImage.node.blurDataURL = base64;
+        }
+    }
 }

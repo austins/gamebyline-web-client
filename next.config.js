@@ -1,4 +1,6 @@
-module.exports = {
+const { withPlaiceholder } = require('@plaiceholder/next');
+
+module.exports = withPlaiceholder({
     images: {
         domains: [
             new URL(process.env.NEXT_PUBLIC_SITE_URL).host,
@@ -16,4 +18,4 @@ module.exports = {
 
         return config;
     },
-};
+});

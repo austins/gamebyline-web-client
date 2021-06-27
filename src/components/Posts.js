@@ -27,6 +27,8 @@ export default function Posts({ authorName, categoryName, posts, search }) {
                                             <div className={styles.postThumbnailContainer}>
                                                 <Card.Img
                                                     as={Image}
+                                                    placeholder="blur"
+                                                    blurDataURL={post.featuredImage.node.blurDataURL}
                                                     src={post.featuredImage.node.mediaItemUrl}
                                                     alt={post.title}
                                                     quality={100}

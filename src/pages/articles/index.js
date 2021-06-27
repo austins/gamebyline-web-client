@@ -1,30 +1,16 @@
 import isInt from 'validator/lib/isInt';
-import Error from 'next/error';
-import useSWR from 'swr';
-import memoize from 'fast-memoize';
+import { getPlaiceholder } from 'plaiceholder';
 import Posts from '../../components/Posts';
 import PostsPager from '../../components/PostsPager';
 import Breadcrumbs, { Crumb } from '../../components/Breadcrumbs';
 import HeadWithTitle from '../../components/HeadWithTitle';
-import LoadingSpinner from '../../components/LoadingSpinner';
 import { postsQuery } from '../../lib/data/queries';
-import { flattenEdges } from '../../lib/data/helpers';
+import { flattenEdges, generateFeaturedImagePlaceholders } from '../../lib/data/helpers';
 import { graphqlFetcher } from '../../lib/data/fetchers';
 
-const getPostsQueryVars = memoize((search, page) => ({
-    offset: page <= 1 ? 0 : (page - 1) * process.env.NEXT_PUBLIC_POSTS_PER_PAGE,
-    size: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE),
-    search,
-}));
-
-export default function PostsBySearch({ search, page }) {
-    const { data, error } = useSWR([postsQuery, getPostsQueryVars(search, page)], graphqlFetcher);
-
-    if (!error && !data) return <LoadingSpinner />;
-    if (error) return <Error statusCode={500} title="Error retrieving articles" />;
-
-    const posts = flattenEdges(data.posts);
-    const { hasMore, hasPrevious } = data.posts.pageInfo.offsetPagination;
+export default function PostsBySearch({ search, page, postsData }) {
+    const posts = flattenEdges(postsData.posts);
+    const { hasMore, hasPrevious } = postsData.posts.pageInfo.offsetPagination;
 
     const crumbs = [new Crumb(`/articles/?page=${page}&search=${search}`, `Page ${page}`)];
 
@@ -59,5 +45,13 @@ export async function getServerSideProps({ query }) {
 
     const page = query.page && isInt(query.page, { min: 1, allow_leading_zeroes: false }) ? Number(query.page) : 1;
 
-    return { props: { search, page } };
+    const postsData = await graphqlFetcher(postsQuery, {
+        offset: page <= 1 ? 0 : (page - 1) * process.env.NEXT_PUBLIC_POSTS_PER_PAGE,
+        size: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE),
+        search,
+    });
+
+    await generateFeaturedImagePlaceholders(getPlaiceholder, postsData.posts.edges);
+
+    return { props: { search, page, postsData } };
 }
