@@ -53,7 +53,7 @@ export default function CommentForm({
                 if (data.success) {
                     const postDataCopy = rfdc({ proto: true })(postData);
 
-                    postDataCopy.postBy.commentCount = postDataCopy.postBy.commentCount + 1;
+                    postDataCopy.postBy.commentCount += 1;
 
                     const { comment } = data;
                     if (!comment.parentId) {
