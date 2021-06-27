@@ -129,7 +129,7 @@ export default function Comments({ postData, postMutate }) {
         <section id="comments">
             <h3>Comments</h3>
 
-            <div>{displayedComments.length > 0 && displayedComments.map(comment => renderComment(comment, 1))}</div>
+            {displayedComments.length > 0 && <div>{displayedComments.map(comment => renderComment(comment, 1))}</div>}
 
             <CommentForm
                 isCommentStatusOpen={isCommentStatusOpen}
