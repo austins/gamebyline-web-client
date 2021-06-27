@@ -3,16 +3,26 @@ import { gql } from 'graphql-request';
 import has from 'lodash/has';
 import nc from 'next-connect';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
-import { commentFieldsFragment } from '../../lib/data/queries';
+import isString from 'lodash/isString';
+import { commentNodeFieldsFragment } from '../../lib/data/queries';
 import { getGraphqlClient } from '../../lib/data/fetchers';
 
 const handler = nc().post(async (req, res) => {
-    if (!req.body) return res.status(StatusCodes.BAD_REQUEST).send(ReasonPhrases.BAD_REQUEST);
+    const { commentOnDatabaseId, content, author = null, authorEmail = null, parentDatabaseId = null } = req.body;
+
+    if (
+        Number.isNaN(commentOnDatabaseId) ||
+        !isString(content) ||
+        (author && !isString(author)) ||
+        (authorEmail && !isString(authorEmail)) ||
+        (parentDatabaseId && Number.isNaN(parentDatabaseId))
+    )
+        return res.status(StatusCodes.BAD_REQUEST).send(ReasonPhrases.BAD_REQUEST);
 
     try {
         const commentData = await getGraphqlClient(req.headers.cookie).request(
             gql`
-                ${commentFieldsFragment}
+                ${commentNodeFieldsFragment}
 
                 mutation (
                     $commentOnDatabaseId: Int!
@@ -32,18 +42,12 @@ const handler = nc().post(async (req, res) => {
                     ) {
                         success
                         comment {
-                            ...commentFields
+                            ...commentNodeFields
                         }
                     }
                 }
             `,
-            {
-                commentOnDatabaseId: req.body.commentOnDatabaseId,
-                content: req.body.content,
-                author: req.body.author ?? null,
-                authorEmail: req.body.authorEmail ?? null,
-                parentDatabaseId: req.body.parentDatabaseId ?? null,
-            }
+            { commentOnDatabaseId, content, author, authorEmail, parentDatabaseId }
         );
 
         return res.status(StatusCodes.OK).json(commentData.createComment);
@@ -52,7 +56,7 @@ const handler = nc().post(async (req, res) => {
             error: {
                 message: has(error, 'response.errors[0].message')
                     ? he.decode(error.response.errors[0].message)
-                    : 'There was an error posting your comment. Please try again.',
+                    : 'There was an error creating your comment. Please try again.',
             },
         });
     }

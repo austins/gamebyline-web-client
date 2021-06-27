@@ -1,0 +1,143 @@
+import Link from 'next/link';
+import Image from 'next/image';
+import has from 'lodash/has';
+import { Fragment, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClock, faReply } from '@fortawesome/free-solid-svg-icons';
+import Moment from 'react-moment';
+import { Link as LinkScroll } from 'react-scroll';
+import defaultAvatar from '../../public/assets/images/default-comment-avatar.jpg';
+import styles from '../styles/Comments.module.scss';
+import { flattenEdges } from '../lib/data/helpers';
+import CommentForm from './CommentForm';
+
+function ReplyToCommentMetadata(databaseId, authorName) {
+    this.databaseId = databaseId;
+    this.authorName = authorName;
+}
+
+export default function Comments({ postData, postMutate }) {
+    const displayedComments = flattenEdges(postData.postBy.comments);
+
+    const isCommentStatusOpen = postData.postBy.commentStatus === 'open';
+    const [replyToCommentMetadata, setReplyToCommentMetadata] = useState(null);
+
+    const renderComment = (comment, level) => {
+        const isChildComment = level > 1;
+        const author = comment.author.node;
+
+        // Get avatar image.
+        const avatarProps = { src: defaultAvatar, alt: author.name };
+        let avatarImage = <Image {...avatarProps} quality={100} />;
+        if (has(author, 'avatar')) {
+            const { avatar } = author;
+
+            avatarProps.src = avatar.url;
+            avatarProps.width = avatar.width;
+            avatarProps.height = avatar.height;
+
+            const avatarUrlHost = new URL(avatar.url).host;
+            const siteUrlHost = new URL(process.env.NEXT_PUBLIC_SITE_URL).host;
+
+            avatarImage = avatarUrlHost.includes(siteUrlHost) ? (
+                <Image {...avatarProps} quality={100} />
+            ) : (
+                <img {...avatarProps} />
+            );
+        }
+
+        const getAuthorLink = showAvatar => {
+            const authorLinkDisplay = showAvatar ? avatarImage : author.name;
+
+            if (has(author, 'slug') && has(author, 'posts.nodes[0].id')) {
+                return (
+                    <Link href={`/articles/author/${author.slug}`} passHref>
+                        <a>{authorLinkDisplay}</a>
+                    </Link>
+                );
+            }
+
+            return authorLinkDisplay;
+        };
+
+        // Get child comments.
+        const childComments = has(comment, 'replies.edges[0]') ? flattenEdges(comment.replies) : [];
+
+        return (
+            <Fragment key={comment.id}>
+                <div
+                    id={`comment-${comment.id}`}
+                    className={`d-flex border-top pt-3 ${styles.comment}`}
+                    style={{ marginLeft: `${!isChildComment ? 0 : level}rem` }}
+                >
+                    {isChildComment && (
+                        <div className="flex-shrink-0">
+                            <FontAwesomeIcon icon={faReply} />
+                        </div>
+                    )}
+
+                    <div className={isChildComment ? `flex-grow-1 ms-3` : 'flex-fill'}>
+                        <div className="d-flex align-items-center mb-1">
+                            <div className="flex-shrink-0">{getAuthorLink(true)}</div>
+
+                            <div className="flex-grow-1 ms-2">
+                                <strong>{getAuthorLink(false)}</strong>
+                                <br />
+                                <div className={styles.commentMeta}>
+                                    <span>
+                                        <FontAwesomeIcon icon={faClock} />
+                                        <Moment
+                                            date={`${comment.dateGmt}Z`}
+                                            titleFormat={`${process.env.NEXT_PUBLIC_DEFAULT_POST_DATE_FORMAT} @ h:mm A`}
+                                            withTitle
+                                            fromNow
+                                        />
+                                    </span>
+
+                                    {isCommentStatusOpen && level === 1 && (
+                                        <span>
+                                            <FontAwesomeIcon icon={faReply} />
+                                            <LinkScroll
+                                                href="#comment-form"
+                                                to="comment-form"
+                                                smooth
+                                                duration={100}
+                                                onClick={() =>
+                                                    setReplyToCommentMetadata(
+                                                        new ReplyToCommentMetadata(comment.databaseId, author.name)
+                                                    )
+                                                }
+                                            >
+                                                Reply
+                                            </LinkScroll>
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div dangerouslySetInnerHTML={{ __html: comment.content }} />
+                    </div>
+                </div>
+
+                {childComments.length > 0 && childComments.map(childComment => renderComment(childComment, level + 1))}
+            </Fragment>
+        );
+    };
+
+    return (
+        <section id="comments">
+            <h3>Comments</h3>
+
+            <div>{displayedComments.length > 0 && displayedComments.map(comment => renderComment(comment, 1))}</div>
+
+            <CommentForm
+                isCommentStatusOpen={isCommentStatusOpen}
+                postData={postData}
+                postMutate={postMutate}
+                replyToCommentMetadata={replyToCommentMetadata}
+                setReplyToCommentMetadata={setReplyToCommentMetadata}
+            />
+        </section>
+    );
+}

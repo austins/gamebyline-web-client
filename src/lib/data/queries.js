@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request';
 
 // Fragments
-export const commentFieldsFragment = gql`
+const commentFieldsFragment = gql`
     fragment commentFields on Comment {
         id
         databaseId
@@ -26,6 +26,21 @@ export const commentFieldsFragment = gql`
             }
         }
         dateGmt
+    }
+`;
+
+export const commentNodeFieldsFragment = gql`
+    ${commentFieldsFragment}
+
+    fragment commentNodeFields on Comment {
+        ...commentFields
+        replies(first: 100, where: { order: ASC, orderby: COMMENT_DATE_GMT }) {
+            edges {
+                node {
+                    ...commentFields
+                }
+            }
+        }
     }
 `;
 
@@ -116,7 +131,7 @@ export const postsQuery = gql`
 `;
 
 export const postQuery = gql`
-    ${commentFieldsFragment}
+    ${commentNodeFieldsFragment}
 
     query ($slug: String!) {
         postBy(slug: $slug) {
@@ -146,17 +161,11 @@ export const postQuery = gql`
                 }
             }
             commentCount
+            commentStatus
             comments(first: 100, where: { order: ASC, orderby: COMMENT_DATE_GMT, parent: 0 }) {
                 edges {
                     node {
-                        ...commentFields
-                        replies(first: 100, where: { order: ASC, orderby: COMMENT_DATE_GMT }) {
-                            edges {
-                                node {
-                                    ...commentFields
-                                }
-                            }
-                        }
+                        ...commentNodeFields
                     }
                 }
             }

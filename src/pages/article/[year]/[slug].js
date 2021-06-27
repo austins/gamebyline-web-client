@@ -13,7 +13,7 @@ import useSWR from 'swr';
 import memoize from 'fast-memoize';
 import HeadWithTitle from '../../../components/HeadWithTitle';
 import styles from '../../../styles/Post.module.scss';
-import CommentsList from '../../../components/CommentsList';
+import Comments from '../../../components/Comments';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import { postQuery } from '../../../lib/data/queries';
 import { graphqlFetcher } from '../../../lib/data/fetchers';
@@ -150,11 +150,7 @@ export default function Post({ year, slug, initialPostData }) {
 
             <hr className="mt-5 mb-4" />
 
-            <section id="comments">
-                <h3>Comments</h3>
-
-                <CommentsList postData={data} postMutate={mutate} />
-            </section>
+            <Comments postData={data} postMutate={mutate} />
         </div>
     );
 }
