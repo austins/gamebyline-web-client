@@ -15,8 +15,6 @@
 
 .postCard {
     background-color: $dark;
-    display: block;
-    flex-direction: unset;
     position: relative;
     top: 0;
     transition: all ease-in-out 0.1s;
@@ -30,9 +28,10 @@
     }
 }
 
-.postThumbnail {
+.postThumbnailContainer {
+    position: relative;
+    height: 100vw;
     max-height: 200px;
-    object-fit: cover;
 }
 
 .postMeta {

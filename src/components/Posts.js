@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { faClock, faTag } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Moment from 'react-moment';
+import Image from 'next/image';
 import styles from '../styles/Posts.module.scss';
 
 export default function Posts({ authorName, categoryName, posts, search }) {
@@ -23,12 +24,16 @@ export default function Posts({ authorName, categoryName, posts, search }) {
                                 <a className={styles.postCardLink}>
                                     <Card className={styles.postCard}>
                                         {post.featuredImage && (
-                                            <Card.Img
-                                                variant="top"
-                                                className={styles.postThumbnail}
-                                                src={post.featuredImage.node.mediaItemUrl}
-                                                alt={post.title}
-                                            />
+                                            <div className={styles.postThumbnailContainer}>
+                                                <Card.Img
+                                                    as={Image}
+                                                    src={post.featuredImage.node.mediaItemUrl}
+                                                    alt={post.title}
+                                                    quality={100}
+                                                    layout="fill"
+                                                    objectFit="cover"
+                                                />
+                                            </div>
                                         )}
 
                                         <Card.Body>
