@@ -54,10 +54,7 @@ export async function getStaticPaths() {
     const postsData = await graphqlFetcher(
         gql`
             query ($size: Int!) {
-                posts(
-                    first: 100
-                    where: { status: PUBLISH, orderby: { field: DATE, order: DESC }, offsetPagination: { size: $size } }
-                ) {
+                posts(where: { status: PUBLISH, offsetPagination: { size: $size } }) {
                     pageInfo {
                         offsetPagination {
                             total
