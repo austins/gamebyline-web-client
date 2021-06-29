@@ -11,7 +11,7 @@ export default function Error({ statusCode }) {
 
             <h1>{title}</h1>
 
-            <p>{is404 ? 'This page could not be found.' : `An error ${statusCode} occurred.`}</p>
+            <div>{is404 ? 'This page could not be found.' : `An error ${statusCode} occurred.`}</div>
         </div>
     );
 }
