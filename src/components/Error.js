@@ -2,8 +2,11 @@ import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import HeadWithTitle from './HeadWithTitle';
 
 export default function Error({ statusCode }) {
-    const is404 = statusCode === StatusCodes.NOT_FOUND;
-    const title = is404 ? 'Page Not Found' : `Error: ${getReasonPhrase(statusCode)}`;
+    const title = statusCode
+        ? statusCode === StatusCodes.NOT_FOUND
+            ? 'Page Not Found'
+            : `Error: ${getReasonPhrase(statusCode)}`
+        : 'Error';
 
     return (
         <div className="text-center">
@@ -11,7 +14,13 @@ export default function Error({ statusCode }) {
 
             <h1>{title}</h1>
 
-            <div>{is404 ? 'This page could not be found.' : `An error ${statusCode} occurred.`}</div>
+            <div>
+                {statusCode
+                    ? statusCode === StatusCodes.NOT_FOUND
+                        ? 'This page could not be found.'
+                        : `An error ${statusCode} occurred on the server.`
+                    : 'An error occurred on the client.'}
+            </div>
         </div>
     );
 }

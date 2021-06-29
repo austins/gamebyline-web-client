@@ -21,7 +21,7 @@ import Error from '../../../components/Error';
 
 const getPostQueryVars = memoize(slug => ({ slug }));
 
-export default function Post({ year, slug, initialPostData }) {
+export default function Post({ slug, initialPostData }) {
     const { data, error, mutate } = useSWR([postQuery, getPostQueryVars(slug)], graphqlFetcher, {
         initialData: initialPostData,
         revalidateOnMount: true, // Since we have Incremental Static Regeneration, the page may be cached, so we should refetch the latest comments data.
@@ -31,14 +31,6 @@ export default function Post({ year, slug, initialPostData }) {
     if (error) return <Error statusCode={StatusCodes.INTERNAL_SERVER_ERROR} />;
 
     const post = data.postBy;
-
-    if (
-        !post ||
-        !isInt(year, { allow_leading_zeroes: false }) ||
-        new Date(`${post.dateGmt}Z`).getUTCFullYear() !== Number.parseInt(year, 10)
-    ) {
-        return <Error statusCode={StatusCodes.NOT_FOUND} />;
-    }
 
     return (
         <div>
@@ -162,10 +154,16 @@ export default function Post({ year, slug, initialPostData }) {
 }
 
 export async function getStaticProps({ params }) {
-    const { slug, year } = params;
+    const { year, slug } = params;
+
+    if (!isInt(year, { allow_leading_zeroes: false })) return { notFound: true };
 
     const initialPostData = await graphqlFetcher(postQuery, getPostQueryVars(slug));
-    if (!has(initialPostData, 'postBy.id')) return { notFound: true };
+    if (
+        !has(initialPostData, 'postBy.id') ||
+        new Date(`${initialPostData.postBy.dateGmt}Z`).getUTCFullYear() !== Number.parseInt(year, 10)
+    )
+        return { notFound: true };
 
     return { props: { year, slug, initialPostData }, revalidate: Number(process.env.REVALIDATION_IN_SECONDS) };
 }
