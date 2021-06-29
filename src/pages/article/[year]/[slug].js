@@ -6,17 +6,18 @@ import Link from 'next/link';
 import { Link as LinkScroll } from 'react-scroll';
 import { SRLWrapper } from 'simple-react-lightbox';
 import Image from 'next/image';
-import Error from 'next/error';
 import has from 'lodash/has';
 import { gql } from 'graphql-request';
 import useSWR from 'swr';
 import memoize from 'fast-memoize';
+import { StatusCodes } from 'http-status-codes';
 import HeadWithTitle from '../../../components/HeadWithTitle';
 import styles from '../../../styles/Post.module.scss';
 import Comments from '../../../components/Comments';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import { postQuery } from '../../../lib/data/queries';
 import { graphqlFetcher } from '../../../lib/data/fetchers';
+import Error from '../../../components/Error';
 
 const getPostQueryVars = memoize(slug => ({ slug }));
 
@@ -27,7 +28,7 @@ export default function Post({ year, slug, initialPostData }) {
     });
 
     if (!error && !data) return <LoadingSpinner />;
-    if (error) return <Error statusCode={500} title="Error retrieving articles" />;
+    if (error) return <Error statusCode={StatusCodes.INTERNAL_SERVER_ERROR} />;
 
     const post = data.postBy;
 
@@ -36,7 +37,7 @@ export default function Post({ year, slug, initialPostData }) {
         !isInt(year, { allow_leading_zeroes: false }) ||
         new Date(`${post.dateGmt}Z`).getUTCFullYear() !== Number.parseInt(year, 10)
     ) {
-        return <Error statusCode={404} title="This page could not be found" />;
+        return <Error statusCode={StatusCodes.NOT_FOUND} />;
     }
 
     return (
