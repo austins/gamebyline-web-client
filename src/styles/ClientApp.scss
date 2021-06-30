@@ -4,7 +4,8 @@
 @import 'node_modules/bootswatch/dist/cosmo/bootswatch';
 
 body {
-    background-image: url('/assets/images/bg-brushed-highlight.svg'), url('/assets/images/bg-brushed.png');
+    background-color: #222;
+    background-image: url('/assets/images/bg-brushed-highlight.webp'), url('/assets/images/bg-brushed.webp');
     background-position: 50% -400px, top left;
     background-size: 2000px 1500px, auto;
     background-repeat: no-repeat, repeat;
@@ -28,7 +29,7 @@ body {
 #main-container {
     box-shadow: 0 0 6px 0 #1a1a1a;
     /* Background pattern from Toptal Subtle Patterns */
-    background: #111 url('/assets/images/bg-black_denim.png');
+    background: #1b1b1b url('/assets/images/bg-black_denim.webp');
     padding: 1.25rem 1.4rem;
     border: 1px solid rgba(20, 20, 20, 0.4);
 }
