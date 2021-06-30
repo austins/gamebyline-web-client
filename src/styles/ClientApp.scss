@@ -71,7 +71,7 @@ pre {
     line-height: 1.5;
 }
 
-figure {
+figure:not(.wp-block-embed) {
     margin-bottom: 0;
 }
 
