@@ -1,4 +1,7 @@
 import { has } from 'lodash';
+import parse, { attributesToProps } from 'html-react-parser';
+import pick from 'lodash/pick';
+import Image from 'next/image';
 
 export function flattenEdges(data) {
     return data.edges.reduce((accumulator, obj) => {
@@ -45,4 +48,35 @@ export async function generateFeaturedImagePlaceholders(getPlaiceholder, postsEd
             post.featuredImage.node.blurDataURL = base64;
         }
     }
+}
+
+export function parseImages(text) {
+    return parse(text, {
+        replace: ({ name, attribs, parent }) => {
+            const allowedParentDomNodes = ['figure', 'div', 'a'];
+            if (name === 'img' && allowedParentDomNodes.includes(parent.name) && attribs) {
+                const imageProps = attributesToProps(pick(attribs, ['class', 'src', 'width', 'height', 'alt']));
+
+                if (
+                    !imageProps.className ||
+                    !imageProps.className.split(' ').some(className => className.startsWith('wp-image-')) ||
+                    !imageProps.width ||
+                    !imageProps.height
+                )
+                    return;
+
+                if (!imageProps.alt) imageProps.alt = '';
+
+                return (
+                    <Image
+                        {...imageProps}
+                        quality={100}
+                        unoptimized={
+                            !new URL(imageProps.src).host.includes(new URL(process.env.NEXT_PUBLIC_SITE_URL).host)
+                        }
+                    />
+                );
+            }
+        },
+    });
 }

@@ -18,6 +18,7 @@ import LoadingSpinner from '../../../components/LoadingSpinner';
 import { postQuery } from '../../../lib/data/queries';
 import { graphqlFetcher } from '../../../lib/data/fetchers';
 import Error from '../../../components/Error';
+import { parseImages } from '../../../lib/data/helpers';
 
 const getPostQueryVars = memoize(slug => ({ slug }));
 
@@ -99,8 +100,7 @@ export default function Post({ slug, initialPostData }) {
                             },
                         }}
                     >
-                        {/* eslint-disable-next-line react/no-danger */}
-                        <div className={styles.postContent} dangerouslySetInnerHTML={{ __html: post.content }} />
+                        <div className={styles.postContent}>{parseImages(post.content)}</div>
                     </SRLWrapper>
                 </div>
 

@@ -4,6 +4,7 @@ import styles from '../styles/Page.module.scss';
 import { csgoCrosshairsQuery, pageQuery } from '../lib/data/queries';
 import { graphqlFetcher } from '../lib/data/fetchers';
 import CsgoCrosshairs from '../components/CsgoCrosshairs';
+import { parseImages } from '../lib/data/helpers';
 
 const csgoCrosshairsSlug = 'csgo-crosshairs';
 
@@ -21,8 +22,7 @@ export default function Page({ pageData, csgoCrosshairsData }) {
             <h1>{page.title}</h1>
 
             <div className="clearfix">
-                {/* eslint-disable-next-line react/no-danger */}
-                <div className={styles.pageContent} dangerouslySetInnerHTML={{ __html: page.content }} />
+                <div className={styles.pageContent}>{parseImages(page.content)}</div>
             </div>
 
             {csgoCrosshairs && <CsgoCrosshairs csgoCrosshairs={csgoCrosshairs} />}

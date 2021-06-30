@@ -71,6 +71,10 @@ pre {
     line-height: 1.5;
 }
 
+figure {
+    margin-bottom: 0;
+}
+
 figure.wp-block-embed-youtube .wp-block-embed__wrapper,
 figure.is-type-video.wp-embed-aspect-16-9 .wp-block-embed__wrapper {
     @extend .ratio, .ratio-16x9;
