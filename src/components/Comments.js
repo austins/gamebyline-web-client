@@ -16,10 +16,9 @@ function ReplyToCommentMetadata(databaseId, authorName) {
     this.authorName = authorName;
 }
 
-export default function Comments({ postData, postMutate }) {
+export default function Comments({ isCommentStatusOpen, postData, postMutate }) {
     const displayedComments = flattenEdges(postData.postBy.comments);
 
-    const isCommentStatusOpen = postData.postBy.commentStatus === 'open';
     const [replyToCommentMetadata, setReplyToCommentMetadata] = useState(null);
 
     const renderComment = (comment, level) => {

@@ -13,7 +13,6 @@ import memoize from 'fast-memoize';
 import HeadWithTitle from '../../../components/HeadWithTitle';
 import styles from '../../../styles/Post.module.scss';
 import Comments from '../../../components/Comments';
-import LoadingSpinner from '../../../components/LoadingSpinner';
 import { postQuery } from '../../../lib/data/queries';
 import { graphqlFetcher } from '../../../lib/data/fetchers';
 import { parseImages } from '../../../lib/data/helpers';
@@ -21,15 +20,18 @@ import { parseImages } from '../../../lib/data/helpers';
 const getPostQueryVars = memoize(slug => ({ slug }));
 
 export default function Post({ slug, initialPostData }) {
+    const isCommentStatusOpen = initialPostData.postBy.commentStatus === 'open';
+
     const { data, mutate } = useSWR([postQuery, getPostQueryVars(slug)], graphqlFetcher, {
         initialData: initialPostData,
-        revalidateOnMount: true, // Since we have Incremental Static Regeneration, the page may be cached, so we should refetch the latest comments data.
+        revalidateOnMount: isCommentStatusOpen, // Since we have Incremental Static Regeneration, the page may be cached, so we should refetch the latest comments data.
     });
 
     // Disable error checking for now since revalidateOnMount causes error to be thrown on fast refreshes.
     // if (error) return <Error statusCode={StatusCodes.INTERNAL_SERVER_ERROR} />;
 
-    if (!data) return <LoadingSpinner />;
+    // Disable data loading check for now since initialData is populated.
+    // if (!data) return <LoadingSpinner />;
 
     const post = data.postBy;
 
@@ -148,7 +150,7 @@ export default function Post({ slug, initialPostData }) {
 
             <hr className="mt-5 mb-4" />
 
-            <Comments postData={data} postMutate={mutate} />
+            <Comments isCommentStatusOpen={isCommentStatusOpen} postData={data} postMutate={mutate} />
         </div>
     );
 }
