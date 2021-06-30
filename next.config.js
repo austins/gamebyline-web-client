@@ -3,6 +3,7 @@ const { execSync } = require('child_process');
 
 module.exports = withPlaiceholder({
     generateBuildId: async () => execSync('git rev-parse HEAD').toString().trim(),
+    cleanDistDir: false,
     reactStrictMode: true,
     images: {
         domains: [
