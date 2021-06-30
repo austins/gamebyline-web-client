@@ -10,26 +10,26 @@ import has from 'lodash/has';
 import { gql } from 'graphql-request';
 import useSWR from 'swr';
 import memoize from 'fast-memoize';
-import { StatusCodes } from 'http-status-codes';
 import HeadWithTitle from '../../../components/HeadWithTitle';
 import styles from '../../../styles/Post.module.scss';
 import Comments from '../../../components/Comments';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import { postQuery } from '../../../lib/data/queries';
 import { graphqlFetcher } from '../../../lib/data/fetchers';
-import Error from '../../../components/Error';
 import { parseImages } from '../../../lib/data/helpers';
 
 const getPostQueryVars = memoize(slug => ({ slug }));
 
 export default function Post({ slug, initialPostData }) {
-    const { data, error, mutate } = useSWR([postQuery, getPostQueryVars(slug)], graphqlFetcher, {
+    const { data, mutate } = useSWR([postQuery, getPostQueryVars(slug)], graphqlFetcher, {
         initialData: initialPostData,
         revalidateOnMount: true, // Since we have Incremental Static Regeneration, the page may be cached, so we should refetch the latest comments data.
     });
 
-    if (!error && !data) return <LoadingSpinner />;
-    if (error) return <Error statusCode={StatusCodes.INTERNAL_SERVER_ERROR} />;
+    // Disable error checking for now since revalidateOnMount causes error to be thrown on fast refreshes.
+    // if (error) return <Error statusCode={StatusCodes.INTERNAL_SERVER_ERROR} />;
+
+    if (!data) return <LoadingSpinner />;
 
     const post = data.postBy;
 
