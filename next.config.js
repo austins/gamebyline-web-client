@@ -1,6 +1,9 @@
 const { withPlaiceholder } = require('@plaiceholder/next');
+const { execSync } = require('child_process');
 
 module.exports = withPlaiceholder({
+    generateBuildId: async () => execSync('git rev-parse HEAD').toString().trim(),
+    reactStrictMode: true,
     images: {
         domains: [
             new URL(process.env.NEXT_PUBLIC_SITE_URL).host,
