@@ -6,6 +6,7 @@ import SimpleReactLightbox from 'simple-react-lightbox';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { SWRConfig } from 'swr';
+import Script from 'next/script';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -14,7 +15,7 @@ export default function ClientApp({ Component, pageProps }) {
     const router = useRouter();
 
     const setGoogleAnalyticsPagePath = url => {
-        if (process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID) {
+        if (process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID && typeof window !== 'undefined' && window.gtag) {
             window.gtag('config', process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID, {
                 page_path: url,
             });
@@ -49,21 +50,39 @@ export default function ClientApp({ Component, pageProps }) {
     const swrConfig = { revalidateOnFocus: false };
 
     return (
-        <SWRConfig value={swrConfig}>
-            <SimpleReactLightbox>
-                <Header />
+        <>
+            <SWRConfig value={swrConfig}>
+                <SimpleReactLightbox>
+                    <Header />
 
-                <main id="main">
-                    <div id="main-inner" className="py-3">
-                        <Container id="main-container">
-                            {(loading && <LoadingSpinner />) || <Component {...pageProps} />}
-                        </Container>
-                    </div>
-                </main>
+                    <main id="main">
+                        <div id="main-inner" className="py-3">
+                            <Container id="main-container">
+                                {(loading && <LoadingSpinner />) || <Component {...pageProps} />}
+                            </Container>
+                        </div>
+                    </main>
 
-                <Footer />
-            </SimpleReactLightbox>
-        </SWRConfig>
+                    <Footer />
+                </SimpleReactLightbox>
+            </SWRConfig>
+
+            {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID && (
+                <>
+                    <Script
+                        src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID}`}
+                        strategy="afterInteractive"
+                    />
+
+                    <Script strategy="afterInteractive">
+                        {`window.dataLayer = window.dataLayer || [];
+                      function gtag(){dataLayer.push(arguments);}
+                      gtag('js', new Date());
+                      gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID}', { anonymize_ip: true, page_path: window.location.pathname });`}
+                    </Script>
+                </>
+            )}
+        </>
     );
 }
 

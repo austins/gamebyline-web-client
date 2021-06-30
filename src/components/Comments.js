@@ -109,6 +109,7 @@ export default function Comments({ postData, postMutate }) {
                             </div>
                         </div>
 
+                        {/* eslint-disable-next-line react/no-danger */}
                         <div dangerouslySetInnerHTML={{ __html: comment.content }} />
                     </div>
                 </div>

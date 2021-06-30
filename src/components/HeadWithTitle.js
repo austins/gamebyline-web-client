@@ -10,23 +10,6 @@ export default function HeadWithTitle({ title, noIndex, innerHTMLString, childre
                 {process.env.NEXT_PUBLIC_SITE_NAME}
             </title>
 
-            {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID && (
-                <>
-                    <script
-                        async
-                        src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID}`}
-                    />
-                    <script
-                        dangerouslySetInnerHTML={{
-                            __html: `window.dataLayer = window.dataLayer || [];
-                      function gtag(){dataLayer.push(arguments);}
-                      gtag('js', new Date());
-                      gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID}', { anonymize_ip: true, page_path: window.location.pathname });`,
-                        }}
-                    />
-                </>
-            )}
-
             {noIndex && <meta name="robots" content="noindex" />}
 
             {innerHTMLString &&
