@@ -13,7 +13,9 @@ export default function CommentForm({
     replyToCommentMetadata,
     setReplyToCommentMetadata,
 }) {
-    const { data: userData } = useSWR('/api/user', restFetcher, { revalidateOnFocus: true });
+    const { data: userData } = useSWR(isCommentStatusOpen ? '/api/user' : null, restFetcher, {
+        revalidateOnFocus: true,
+    });
     const isLoggedIn = userData && has(userData, 'name');
 
     const [commentFormName, setCommentFormName] = useState('');
