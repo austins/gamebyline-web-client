@@ -28,7 +28,7 @@ export default function Post({ slug, initialPostData }) {
     });
 
     // Disable error checking for now since revalidateOnMount causes error to be thrown on fast refreshes.
-    // if (error) return <Error statusCode={StatusCodes.INTERNAL_SERVER_ERROR} />;
+    // if (error) return <Error statusCode={error.statusCode} />;
 
     // Disable data loading check for now since initialData is populated.
     // if (!data) return <LoadingSpinner />;
