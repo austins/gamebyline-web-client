@@ -138,7 +138,6 @@ export default function Post({ slug, initialPostData }) {
                                         </Link>
                                     </h5>
 
-                                    {/* eslint-disable-next-line react/no-danger */}
                                     <div dangerouslySetInnerHTML={{ __html: post.author.node.description }} />
                                 </div>
                             </div>

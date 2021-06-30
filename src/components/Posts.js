@@ -42,7 +42,6 @@ export default function Posts({ authorName, categoryName, posts, search }) {
                                             <Card.Title>{post.title}</Card.Title>
 
                                             <Card.Text as="div">
-                                                {/* eslint-disable-next-line react/no-danger */}
                                                 <div dangerouslySetInnerHTML={{ __html: post.excerpt }} />
                                             </Card.Text>
 

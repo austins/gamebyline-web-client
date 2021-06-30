@@ -9,6 +9,7 @@
         "no-plusplus": "off",
         "no-restricted-syntax": "off",
         "operator-assignment": "warn",
+        "react/no-danger": "off",
         "sort-keys": "off"
     }
 }
