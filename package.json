@@ -4,7 +4,7 @@
     "scripts": {
         "createGlobalDataManifest": "node createGlobalDataManifest.js",
         "predev": "npm run createGlobalDataManifest",
-        "dev": "NODE_OPTIONS='--inspect' next dev",
+        "dev": "next dev",
         "prebuild": "npm run createGlobalDataManifest",
         "build": "next build",
         "postbuild": "next-sitemap --config next-sitemap.config.js",

@@ -28,8 +28,8 @@ export default function Post({ slug, initialPostData }) {
         revalidateOnMount: true, // Since we have Incremental Static Regeneration, the page may be cached, so we should refetch the latest comments data.
     });
 
+    if (!error && !data) return <LoadingSpinner />;
     if (error) return <Error statusCode={StatusCodes.INTERNAL_SERVER_ERROR} />;
-    if (!data) return <LoadingSpinner />;
 
     const post = data.postBy;
 
