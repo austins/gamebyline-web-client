@@ -14,12 +14,13 @@ export default function Category({ page, slug, postsData }) {
     const categoryName = posts[0].categories.nodes[0].name;
 
     return (
-        <div>
+        <>
             <HeadWithTitle title={categoryName} noIndex />
 
             <Posts categoryName={categoryName} posts={posts} />
+
             <PostsPager categorySlug={slug} hasMore={hasMore} hasPrevious={hasPrevious} page={page} />
-        </div>
+        </>
     );
 }
 

@@ -15,12 +15,13 @@ export default function Author({ page, slug, postsData }) {
     const authorName = posts[0].author.node.name;
 
     return (
-        <div>
+        <>
             <HeadWithTitle title={authorName} noIndex />
 
             <Posts authorName={authorName} posts={posts} />
+
             <PostsPager authorSlug={slug} hasMore={hasMore} hasPrevious={hasPrevious} page={page} />
-        </div>
+        </>
     );
 }
 

@@ -137,7 +137,6 @@ export const postQuery = gql`
         postBy(slug: $slug) {
             id
             databaseId
-            guid
             status
             title
             content

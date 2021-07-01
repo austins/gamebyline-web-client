@@ -15,7 +15,7 @@ export default function PostsBySearch({ search, page, postsData }) {
     const crumbs = [new Crumb(`/articles/?page=${page}&search=${search}`, `Page ${page}`)];
 
     return (
-        <div>
+        <>
             <HeadWithTitle title="Search" noIndex />
 
             {(posts.length > 0 && (
@@ -35,7 +35,7 @@ export default function PostsBySearch({ search, page, postsData }) {
                     <div>No articles match your search criteria.</div>
                 </div>
             )}
-        </div>
+        </>
     );
 }
 

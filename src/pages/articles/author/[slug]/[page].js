@@ -24,7 +24,7 @@ export default function AuthorByPage({ page, slug, postsData }) {
     const postsPager = <PostsPager authorSlug={slug} hasMore={hasMore} hasPrevious={hasPrevious} page={page} />;
 
     return (
-        <div>
+        <>
             <HeadWithTitle title={authorName} noIndex />
 
             <Breadcrumbs crumbs={crumbs} />
@@ -34,7 +34,7 @@ export default function AuthorByPage({ page, slug, postsData }) {
             <Posts authorName={authorName} posts={posts} />
 
             {postsPager}
-        </div>
+        </>
     );
 }
 

@@ -18,7 +18,7 @@ export default function PostsByPage({ page, postsData }) {
     const postsPager = <PostsPager hasMore={hasMore} hasPrevious={hasPrevious} page={page} />;
 
     return (
-        <div>
+        <>
             <HeadWithTitle title="Articles" />
 
             <Breadcrumbs crumbs={crumbs} />
@@ -28,7 +28,7 @@ export default function PostsByPage({ page, postsData }) {
             <Posts posts={posts} />
 
             {postsPager}
-        </div>
+        </>
     );
 }
 

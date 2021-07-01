@@ -23,7 +23,7 @@ export default function CategoryByPage({ page, slug, postsData }) {
     const postsPager = <PostsPager categorySlug={slug} hasMore={hasMore} hasPrevious={hasPrevious} page={page} />;
 
     return (
-        <div>
+        <>
             <HeadWithTitle title={categoryName} noIndex />
 
             <Breadcrumbs crumbs={crumbs} />
@@ -33,7 +33,7 @@ export default function CategoryByPage({ page, slug, postsData }) {
             <Posts categoryName={categoryName} posts={posts} />
 
             {postsPager}
-        </div>
+        </>
     );
 }
 

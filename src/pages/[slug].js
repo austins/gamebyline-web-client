@@ -1,14 +1,12 @@
 import { gql } from 'graphql-request';
 import HeadWithTitle from '../components/HeadWithTitle';
-import styles from '../styles/Page.module.scss';
 import { csgoCrosshairsQuery, pageQuery } from '../lib/data/queries';
 import { graphqlFetcher } from '../lib/data/fetchers';
 import CsgoCrosshairs from '../components/CsgoCrosshairs';
-import { parseImages } from '../lib/data/helpers';
 
 const csgoCrosshairsSlug = 'csgo-crosshairs';
 
-export default function Page({ pageData, csgoCrosshairsData }) {
+export default function SinglePage({ pageData, csgoCrosshairsData }) {
     const page = pageData.pageBy;
 
     let csgoCrosshairs = null;
@@ -16,17 +14,13 @@ export default function Page({ pageData, csgoCrosshairsData }) {
         csgoCrosshairs = csgoCrosshairsData.csgoCrosshairs.nodes;
 
     return (
-        <div>
+        <>
             <HeadWithTitle title={page.title} innerHTMLString={page.seo.fullHead} />
 
-            <h1>{page.title}</h1>
-
-            <div className="clearfix">
-                <div className={styles.pageContent}>{parseImages(page.content)}</div>
-            </div>
+            <Page page={page} parseContent />
 
             {csgoCrosshairs && <CsgoCrosshairs csgoCrosshairs={csgoCrosshairs} />}
-        </div>
+        </>
     );
 }
 

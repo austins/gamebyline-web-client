@@ -11,13 +11,13 @@ export default function Home({ postsData }) {
     const { hasMore, hasPrevious } = postsData.posts.pageInfo.offsetPagination;
 
     return (
-        <div>
+        <>
             <HeadWithTitle />
 
             <Posts posts={posts} />
 
             <PostsPager hasMore={hasMore} hasPrevious={hasPrevious} page={1} />
-        </div>
+        </>
     );
 }
 
