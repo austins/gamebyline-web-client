@@ -49,25 +49,25 @@ export default function Header() {
                                 menuItems.map(menuItem => {
                                     if (!menuItem.children.length) {
                                         return (
-                                            <HeaderMenuItemLink key={menuItem.key} href={menuItem.url}>
+                                            <HeaderMenuItemLink key={menuItem.id} href={menuItem.url}>
                                                 <a
                                                     className="nav-link"
                                                     target={menuItem.isExternal ? '_blank' : '_self'}
                                                 >
-                                                    {menuItem.title}
+                                                    {menuItem.label}
                                                 </a>
                                             </HeaderMenuItemLink>
                                         );
                                     }
 
                                     return (
-                                        <NavDropdown key={menuItem.key} id={menuItem.key} title={menuItem.title}>
+                                        <NavDropdown key={menuItem.id} id={menuItem.id} title={menuItem.label}>
                                             {menuItem.children.map(childMenuItem => (
-                                                <HeaderMenuItemLink key={childMenuItem.key} href={childMenuItem.url}>
+                                                <HeaderMenuItemLink key={childMenuItem.id} href={childMenuItem.url}>
                                                     <NavDropdown.Item
                                                         target={childMenuItem.isExternal ? '_blank' : '_self'}
                                                     >
-                                                        {childMenuItem.title}
+                                                        {childMenuItem.label}
                                                     </NavDropdown.Item>
                                                 </HeaderMenuItemLink>
                                             ))}

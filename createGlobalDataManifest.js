@@ -25,9 +25,9 @@ loadEnvConfig(projectDir);
                         nodes {
                             menuItems(first: 100) {
                                 nodes {
-                                    key: id
+                                    id
                                     parentId
-                                    title: label
+                                    label
                                     url
                                 }
                             }

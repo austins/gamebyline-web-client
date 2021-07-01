@@ -31,7 +31,7 @@ export function mapMenuItemsChildrenToParents(menuItemsNodes) {
             }
         }
 
-        const { key: id, parentId = 0 } = newItem;
+        const { id, parentId = 0 } = newItem;
         childrenOf[id] = childrenOf[id] || [];
         newItem.children = childrenOf[id];
         parentId ? (childrenOf[parentId] = childrenOf[parentId] || []).push(newItem) : tree.push(newItem);
