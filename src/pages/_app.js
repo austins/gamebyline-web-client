@@ -1,14 +1,16 @@
-import '../styles/ClientApp.scss';
+import 'nprogress/nprogress.css';
 import '@fortawesome/fontawesome-svg-core/styles.css';
+import '../styles/ClientApp.scss';
 import { Container } from 'react-bootstrap';
 import Moment from 'react-moment';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { SWRConfig } from 'swr';
+import NProgress from 'nprogress';
+import debounce from 'lodash/debounce';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function ClientApp({ Component, pageProps }) {
     const router = useRouter();
@@ -21,17 +23,23 @@ export default function ClientApp({ Component, pageProps }) {
         }
     };
 
-    const [loading, setLoading] = useState(false);
-
     useEffect(() => {
-        const handleRouteChangeStart = () => setLoading(true);
+        // NProgress handlers.
+        const startNProgress = debounce(NProgress.start, 300);
+        const stopNProgress = () => {
+            startNProgress.cancel();
+            NProgress.done();
+        };
+
+        // Router change handlers.
+        const handleRouteChangeStart = () => startNProgress();
 
         const handleRouteChangeComplete = url => {
-            setLoading(false);
+            stopNProgress();
             setGoogleAnalyticsPagePath(url);
         };
 
-        const handleRouteChangeError = () => setLoading(false);
+        const handleRouteChangeError = () => stopNProgress();
 
         router.events.on('routeChangeStart', handleRouteChangeStart);
         router.events.on('routeChangeComplete', handleRouteChangeComplete);
@@ -56,7 +64,7 @@ export default function ClientApp({ Component, pageProps }) {
                 <main id="main">
                     <div id="main-inner" className="py-3">
                         <Container id="main-container">
-                            {(loading && <LoadingSpinner />) || <Component {...pageProps} />}
+                            <Component {...pageProps} />
                         </Container>
                     </div>
                 </main>
