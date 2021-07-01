@@ -6,6 +6,7 @@ import { Link as LinkScroll } from 'react-scroll';
 import { SRLWrapper } from 'simple-react-lightbox';
 import Image from 'next/image';
 import parse from 'html-react-parser';
+import isUndefined from 'lodash/isUndefined';
 import { parseImages } from '../lib/data/helpers';
 import styles from '../styles/Post.module.scss';
 
@@ -23,7 +24,7 @@ export default function Post({ post, parseContent = false }) {
                         </Link>
                     </span>
 
-                    {post.dateGmt && (
+                    {!isUndefined(post.dateGmt) && (
                         <span>
                             <FontAwesomeIcon icon={faClock} />
                             <Moment
@@ -42,7 +43,7 @@ export default function Post({ post, parseContent = false }) {
                         </Link>
                     </span>
 
-                    {post.commentCount && (
+                    {!isUndefined(post.commentCount) && (
                         <span>
                             <FontAwesomeIcon icon={faComments} />
                             <LinkScroll href="#comments" to="comments" smooth duration={100}>
