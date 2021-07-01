@@ -7,15 +7,15 @@ import Page from '../components/Page';
 import Post from '../components/Post';
 
 export default function Preview({ type, data }) {
-    const title = data.postBy?.title ?? data.pageBy?.title;
+    const title = data.post?.title ?? data.page?.title;
 
     return (
         <>
             <HeadWithTitle title={title} noIndex />
 
-            <Alert variant="info">Previewing an unpublished {type}.</Alert>
+            <Alert variant="info">Previewing a {type}.</Alert>
 
-            {(type === 'post' && <Post post={data.postBy} />) || (type === 'page' && <Page page={data.pageBy} />)}
+            {(type === 'post' && <Post post={data.post} />) || (type === 'page' && <Page page={data.page} />)}
         </>
     );
 }
@@ -31,8 +31,8 @@ export async function getServerSideProps({ query, req }) {
     if (type === 'post') {
         data = await graphqlClient.request(
             gql`
-                query ($postId: Int!) {
-                    postBy(postId: $postId) {
+                query ($postId: ID!) {
+                    post(id: $postId, idType: DATABASE_ID, asPreview: true) {
                         title
                         content
                         author {
@@ -53,12 +53,12 @@ export async function getServerSideProps({ query, req }) {
             { postId: Number(id) }
         );
 
-        if (!data.postBy) return { notFound: true };
+        if (!data.post) return { notFound: true };
     } else if (type === 'page') {
         data = await graphqlClient.request(
             gql`
-                query ($pageId: Int!) {
-                    pageBy(pageId: $pageId) {
+                query ($pageId: ID!) {
+                    page(id: $pageId, idType: DATABASE_ID, asPreview: true) {
                         title
                         content
                     }
@@ -67,7 +67,7 @@ export async function getServerSideProps({ query, req }) {
             { pageId: Number(id) }
         );
 
-        if (!data.pageBy) return { notFound: true };
+        if (!data.page) return { notFound: true };
     }
 
     return { props: { type, data } };
