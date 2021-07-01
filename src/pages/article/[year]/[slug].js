@@ -12,7 +12,7 @@ import Post from '../../../components/Post';
 const getPostQueryVars = memoize(slug => ({ slug }));
 
 export default function SinglePost({ slug, initialPostData }) {
-    const isCommentStatusOpen = initialPostData.postBy.commentStatus === 'open';
+    const isCommentStatusOpen = initialPostData.post.commentStatus === 'open';
 
     const { data, mutate } = useSWR([postQuery, getPostQueryVars(slug)], graphqlFetcher, {
         initialData: initialPostData,
@@ -25,7 +25,7 @@ export default function SinglePost({ slug, initialPostData }) {
     // Disable data loading check for now since initialData is populated.
     // if (!data) return <LoadingSpinner />;
 
-    const post = data.postBy;
+    const { post } = data;
 
     return (
         <>
@@ -47,8 +47,8 @@ export async function getStaticProps({ params }) {
 
     const initialPostData = await graphqlFetcher(postQuery, getPostQueryVars(slug));
     if (
-        !has(initialPostData, 'postBy.id') ||
-        new Date(`${initialPostData.postBy.dateGmt}Z`).getUTCFullYear() !== Number.parseInt(year, 10)
+        !has(initialPostData, 'post.id') ||
+        new Date(`${initialPostData.post.dateGmt}Z`).getUTCFullYear() !== Number.parseInt(year, 10)
     )
         return { notFound: true };
 

@@ -32,7 +32,7 @@ export default function CommentForm({
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                commentOnDatabaseId: postData.postBy.databaseId,
+                commentOnDatabaseId: postData.post.databaseId,
                 author: isLoggedIn ? null : commentFormName,
                 authorEmail: isLoggedIn ? null : commentFormEmail,
                 content: commentFormMessage.trim(),
@@ -55,17 +55,17 @@ export default function CommentForm({
                 if (data.success) {
                     const postDataCopy = rfdc({ proto: true })(postData);
 
-                    postDataCopy.postBy.commentCount += 1;
+                    postDataCopy.post.commentCount += 1;
 
                     const { comment } = data;
                     if (!comment.parentId) {
-                        postDataCopy.postBy.comments.edges.push({ node: comment });
+                        postDataCopy.post.comments.edges.push({ node: comment });
                     } else {
-                        const parentCommentIndex = postDataCopy.postBy.comments.edges.findIndex(
+                        const parentCommentIndex = postDataCopy.post.comments.edges.findIndex(
                             c => c.node.id === comment.parentId
                         );
 
-                        postDataCopy.postBy.comments.edges[parentCommentIndex].node.replies.edges.push({
+                        postDataCopy.post.comments.edges[parentCommentIndex].node.replies.edges.push({
                             node: comment,
                         });
                     }

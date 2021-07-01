@@ -46,8 +46,8 @@ export const commentNodeFieldsFragment = gql`
 
 // Queries
 export const pageQuery = gql`
-    query ($slug: String!) {
-        pageBy(uri: $slug) {
+    query ($slug: ID!) {
+        page(id: $slug, idType: URI) {
             title
             content
             seo {
@@ -133,8 +133,8 @@ export const postsQuery = gql`
 export const postQuery = gql`
     ${commentNodeFieldsFragment}
 
-    query ($slug: String!) {
-        postBy(slug: $slug) {
+    query ($slug: ID!) {
+        post(id: $slug, idType: SLUG) {
             id
             databaseId
             status

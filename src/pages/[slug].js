@@ -8,7 +8,7 @@ import Page from '../components/Page';
 const csgoCrosshairsSlug = 'csgo-crosshairs';
 
 export default function SinglePage({ pageData, csgoCrosshairsData }) {
-    const page = pageData.pageBy;
+    const { page } = pageData;
 
     let csgoCrosshairs = null;
     if (csgoCrosshairsData && csgoCrosshairsData.csgoCrosshairs.nodes.length)
@@ -30,7 +30,7 @@ export async function getStaticProps({ params }) {
 
     const pageData = await graphqlFetcher(pageQuery, { slug });
 
-    if (!pageData.pageBy) return { notFound: true };
+    if (!pageData.page) return { notFound: true };
 
     // If csgo-crosshairs page, get CS:GO crosshairs.
     let csgoCrosshairsData = null;
