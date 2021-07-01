@@ -71,8 +71,14 @@ pre {
     line-height: 1.5;
 }
 
-figure:not(.wp-block-embed):not(.wp-block-image):not(.aligncenter) {
+figure.alignleft,
+figure.alignright {
     margin-bottom: 0;
+}
+
+figure.wp-block-image,
+figure.aligncenter {
+    margin-bottom: 0.6rem;
 }
 
 figure.wp-block-embed-youtube .wp-block-embed__wrapper,
