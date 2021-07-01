@@ -28,46 +28,51 @@ export async function getServerSideProps({ query, req }) {
 
     const graphqlClient = getGraphqlClient(req.headers.cookie);
     let data = null;
-    if (type === 'post') {
-        data = await graphqlClient.request(
-            gql`
-                query ($postId: ID!) {
-                    post(id: $postId, idType: DATABASE_ID, asPreview: true) {
-                        title
-                        content
-                        author {
-                            node {
-                                name
-                                slug
+    try {
+        if (type === 'post') {
+            data = await graphqlClient.request(
+                gql`
+                    query ($postId: ID!) {
+                        post(id: $postId, idType: DATABASE_ID, asPreview: true) {
+                            title
+                            content
+                            author {
+                                node {
+                                    name
+                                    slug
+                                }
                             }
-                        }
-                        categories {
-                            nodes {
-                                name
-                                slug
+                            categories {
+                                nodes {
+                                    name
+                                    slug
+                                }
                             }
                         }
                     }
-                }
-            `,
-            { postId: Number(id) }
-        );
+                `,
+                { postId: Number(id) }
+            );
 
-        if (!data.post) return { notFound: true };
-    } else if (type === 'page') {
-        data = await graphqlClient.request(
-            gql`
-                query ($pageId: ID!) {
-                    page(id: $pageId, idType: DATABASE_ID, asPreview: true) {
-                        title
-                        content
+            if (!data.post) return { notFound: true };
+        } else if (type === 'page') {
+            data = await graphqlClient.request(
+                gql`
+                    query ($pageId: ID!) {
+                        page(id: $pageId, idType: DATABASE_ID, asPreview: true) {
+                            title
+                            content
+                        }
                     }
-                }
-            `,
-            { pageId: Number(id) }
-        );
+                `,
+                { pageId: Number(id) }
+            );
 
-        if (!data.page) return { notFound: true };
+            if (!data.page) return { notFound: true };
+        }
+    } catch {
+        // WPGraphQL throws "Call to a member function then() on null" internal server error if ID doesn't exist.
+        return { notFound: true };
     }
 
     return { props: { type, data } };
