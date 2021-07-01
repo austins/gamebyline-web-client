@@ -3,6 +3,7 @@ import HeadWithTitle from '../components/HeadWithTitle';
 import { csgoCrosshairsQuery, pageQuery } from '../lib/data/queries';
 import { graphqlFetcher } from '../lib/data/fetchers';
 import CsgoCrosshairs from '../components/CsgoCrosshairs';
+import Page from '../components/Page';
 
 const csgoCrosshairsSlug = 'csgo-crosshairs';
 
