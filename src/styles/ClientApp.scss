@@ -71,13 +71,10 @@ pre {
     line-height: 1.5;
 }
 
-figure.alignleft,
-figure.alignright {
-    margin-bottom: 0;
-}
-
 figure.wp-block-image,
-figure.aligncenter {
+figure.alignleft,
+figure.aligncenter,
+figure.alignright {
     margin-bottom: 0.6rem;
 }
 
