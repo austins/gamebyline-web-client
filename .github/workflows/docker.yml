@@ -34,7 +34,7 @@ jobs:
                         NEXT_PUBLIC_API_GRAPHQL_URL=${{ secrets.NEXT_PUBLIC_API_GRAPHQL_URL }}
                         NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID }}
                     push: true
-                    tags: austins/austinsdev-web-client:latest
+                    tags: ${{ secrets.DOCKER_REGISTRY }}/austinsdev-web-client:latest
                     cache-from: type=local,src=/tmp/.buildx-cache
                     cache-to: type=local,dest=/tmp/.buildx-cache-new
             - # Temp fix
