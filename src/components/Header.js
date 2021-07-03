@@ -4,8 +4,10 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import get from 'lodash/get';
+import isObject from 'lodash/isObject';
+import has from 'lodash/has';
 import logoLight from '../../public/assets/images/logo-light.png';
 import HeaderMenuItemLink from './HeaderMenuItemLink';
 import styles from '../styles/Header.module.scss';
@@ -17,7 +19,26 @@ export default function Header() {
     const router = useRouter();
 
     // Get menu items.
-    const { data: headerMenuData, isValidating: isValidatingHeaderMenuData } = useSWR(headerMenuQuery, graphqlFetcher);
+    const headerMenuDataCacheKey = 'headerMenuData';
+    if (typeof window !== 'undefined') {
+        const headerMenuDataCache = localStorage.getItem(headerMenuDataCacheKey);
+        if (headerMenuDataCache) {
+            try {
+                const parsedHeaderMenuDataCache = JSON.parse(headerMenuDataCache);
+                if (isObject(parsedHeaderMenuDataCache) && has(parsedHeaderMenuDataCache, 'menu.menuItems.nodes'))
+                    mutate(headerMenuQuery, parsedHeaderMenuDataCache, false);
+            } catch {
+                // Do nothing if headerMenuDataCache is invalid.
+            }
+        }
+    }
+
+    const { data: headerMenuData, isValidating: isValidatingHeaderMenuData } = useSWR(headerMenuQuery, graphqlFetcher, {
+        onError: () => localStorage.removeItem(headerMenuDataCacheKey),
+        onSuccess: fetchedHeaderMenuData =>
+            localStorage.setItem(headerMenuDataCacheKey, JSON.stringify(fetchedHeaderMenuData)),
+    });
+
     let menuItems = get(headerMenuData ?? {}, 'menu.menuItems.nodes', []);
     if (menuItems.length) menuItems = mapMenuItemsChildrenToParents(menuItems);
 
