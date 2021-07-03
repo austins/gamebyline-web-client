@@ -4,7 +4,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import get from 'lodash/get';
 import isObject from 'lodash/isObject';
 import has from 'lodash/has';
@@ -19,7 +19,6 @@ export default function Header() {
     const router = useRouter();
 
     // Get menu items.
-    let initialHeaderMenuData = null;
     const headerMenuDataCacheKey = 'headerMenuData';
     if (typeof window !== 'undefined') {
         const headerMenuDataCache = localStorage.getItem(headerMenuDataCacheKey);
@@ -27,16 +26,15 @@ export default function Header() {
             try {
                 const parsedHeaderMenuDataCache = JSON.parse(headerMenuDataCache);
                 if (isObject(parsedHeaderMenuDataCache) && has(parsedHeaderMenuDataCache, 'menu.menuItems.nodes'))
-                    initialHeaderMenuData = parsedHeaderMenuDataCache;
+                    mutate(headerMenuQuery, parsedHeaderMenuDataCache, false);
             } catch {
                 // Do nothing if headerMenuDataCache is invalid.
             }
         }
     }
 
-    const { data: headerMenuData, isValidating: headerMenuDataIsValidating } = useSWR(headerMenuQuery, graphqlFetcher, {
-        initialData: initialHeaderMenuData,
-        onError: () => localStorage.removeItem(headerMenuDataCacheKey),
+    const { data: headerMenuData } = useSWR(headerMenuQuery, graphqlFetcher, {
+        revalidateOnMount: true,
         onSuccess: fetchedHeaderMenuData =>
             localStorage.setItem(headerMenuDataCacheKey, JSON.stringify(fetchedHeaderMenuData)),
     });
@@ -68,11 +66,7 @@ export default function Header() {
 
                     <Navbar.Collapse id="navbar-collapse">
                         <Nav className="me-auto">
-                            {!headerMenuDataIsValidating && !menuItems.length ? (
-                                <HeaderMenuItemLink href="/">
-                                    <a className="nav-link">Home</a>
-                                </HeaderMenuItemLink>
-                            ) : (
+                            {menuItems.length > 0 &&
                                 menuItems.map(menuItem => {
                                     if (!menuItem.children.length) {
                                         return (
@@ -100,8 +94,7 @@ export default function Header() {
                                             ))}
                                         </NavDropdown>
                                     );
-                                })
-                            )}
+                                })}
                         </Nav>
 
                         <Form onSubmit={search} className="d-flex">
