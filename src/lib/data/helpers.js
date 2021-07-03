@@ -2,6 +2,7 @@ import { has } from 'lodash';
 import parse, { attributesToProps } from 'html-react-parser';
 import pick from 'lodash/pick';
 import Image from 'next/image';
+import isString from 'lodash/isString';
 
 export function flattenEdges(data) {
     return data.edges.reduce((accumulator, obj) => {
@@ -51,6 +52,8 @@ export async function generateFeaturedImagePlaceholders(getPlaiceholder, postsEd
 }
 
 export function parseImages(text) {
+    if (!isString(text) || text === '') return '';
+
     return parse(text, {
         replace: ({ name, attribs, parent }) => {
             const allowedParentDomNodes = ['figure', 'div', 'a'];
