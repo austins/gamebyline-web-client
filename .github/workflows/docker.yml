@@ -29,6 +29,10 @@ jobs:
                 uses: docker/build-push-action@v2
                 with:
                     context: .
+                    build-args: |
+                        NEXT_PUBLIC_SITE_URL=${{ secrets.NEXT_PUBLIC_SITE_URL }}
+                        NEXT_PUBLIC_API_GRAPHQL_URL=${{ secrets.NEXT_PUBLIC_API_GRAPHQL_URL }}
+                        NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID }}
                     push: true
                     tags: austins/austinsdev-web-client:latest
                     cache-from: type=local,src=/tmp/.buildx-cache
