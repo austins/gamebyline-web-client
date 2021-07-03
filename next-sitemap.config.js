@@ -1,5 +1,11 @@
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
 module.exports = {
-    exclude: ['/articles', '/articles/*'],
+    exclude: ['*'],
+    priority: 0.5,
     generateRobotsTxt: true,
-    siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
+    robotsTxtOptions: {
+        additionalSitemaps: [`${siteUrl}/sitemap-server.xml`],
+    },
+    siteUrl,
 };

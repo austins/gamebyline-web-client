@@ -2,10 +2,7 @@
     "name": "gamebyline-web-client",
     "private": true,
     "scripts": {
-        "createGlobalDataManifest": "node createGlobalDataManifest.js",
-        "predev": "npm run createGlobalDataManifest",
         "dev": "next dev",
-        "prebuild": "npm run createGlobalDataManifest",
         "build": "next build",
         "postbuild": "next-sitemap --config next-sitemap.config.js",
         "start": "next start",
@@ -35,6 +32,7 @@
         "moment": "^2.29.1",
         "next": "^11.0.1",
         "next-connect": "^0.10.1",
+        "next-sitemap": "^1.6.124",
         "nprogress": "^0.2.0",
         "plaiceholder": "^2.0.1",
         "react": "^17.0.2",
@@ -54,7 +52,6 @@
         "@next/eslint-plugin-next": "^11.0.1",
         "eslint": "^7.29.0",
         "eslint-config-next": "^11.0.1",
-        "next-sitemap": "^1.6.124",
         "sass": "~1.32.12"
     }
 }

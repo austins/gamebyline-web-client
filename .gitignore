@@ -21,7 +21,5 @@ yarn-error.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-ecosystem.config.js
-globalDataManifest.json
 public/robots.txt
 public/sitemap*.xml

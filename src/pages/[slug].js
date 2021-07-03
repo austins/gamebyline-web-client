@@ -1,6 +1,5 @@
-import { gql } from 'graphql-request';
 import HeadWithTitle from '../components/HeadWithTitle';
-import { csgoCrosshairsQuery, pageQuery } from '../lib/data/queries';
+import { csgoCrosshairsQuery, pagePathsQuery, pageQuery } from '../lib/data/queries';
 import { graphqlFetcher } from '../lib/data/fetchers';
 import CsgoCrosshairs from '../components/CsgoCrosshairs';
 import Page from '../components/Page';
@@ -43,15 +42,7 @@ export async function getStaticProps({ params }) {
 }
 
 export async function getStaticPaths() {
-    const pageData = await graphqlFetcher(gql`
-        query {
-            pages(first: 100, where: { status: PUBLISH }) {
-                nodes {
-                    slug
-                }
-            }
-        }
-    `);
+    const pageData = await graphqlFetcher(pagePathsQuery);
 
     const pages = pageData.pages.nodes;
 

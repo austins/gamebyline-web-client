@@ -4,17 +4,21 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
+import useSWR from 'swr';
+import get from 'lodash/get';
 import logoLight from '../../public/assets/images/logo-light.png';
 import HeaderMenuItemLink from './HeaderMenuItemLink';
 import styles from '../styles/Header.module.scss';
-import globalDataManifest from '../../globalDataManifest.json';
 import { mapMenuItemsChildrenToParents } from '../lib/data/helpers';
+import { graphqlFetcher } from '../lib/data/fetchers';
+import { headerMenuQuery } from '../lib/data/queries';
 
 export default function Header() {
     const router = useRouter();
 
     // Get menu items.
-    let menuItems = globalDataManifest.headerMenuItems ?? [];
+    const { data: headerMenuData, isValidating: isValidatingHeaderMenuData } = useSWR(headerMenuQuery, graphqlFetcher);
+    let menuItems = get(headerMenuData ?? {}, 'menu.menuItems.nodes', []);
     if (menuItems.length) menuItems = mapMenuItemsChildrenToParents(menuItems);
 
     const search = e => {
@@ -41,7 +45,7 @@ export default function Header() {
 
                     <Navbar.Collapse id="navbar-collapse">
                         <Nav className="me-auto">
-                            {!menuItems.length ? (
+                            {!isValidatingHeaderMenuData && !menuItems.length ? (
                                 <HeaderMenuItemLink href="/">
                                     <a className="nav-link">Home</a>
                                 </HeaderMenuItemLink>

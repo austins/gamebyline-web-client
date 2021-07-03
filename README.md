@@ -20,6 +20,8 @@ Pages are statically generated at build-time except for the search page. They ma
 
 ## Deployment
 
+Dockerization is WIP.
+
 For a self-hosted server, it should be configured with Linux, [Node.js (LTS)](https://github.com/nodesource/distributions/blob/master/README.md) with [pm2](https://github.com/Unitech/pm2) installed, and [webhook](https://github.com/adnanh/webhook).
 - After cloning the repo onto the server, create a `.env.local` and `ecosystem.config.js` file (see the provided example files) with the environment variables set. Run `npm ci && npm run build` and then `pm2 start ecosystem.config.js` to start the app with load-balancing. The server can be configured to auto-start the app with pm2.
 - webhook must be set up to run a script to run `git pull && npm ci && npm run build && pm2 reload gamebyline-web-client`.

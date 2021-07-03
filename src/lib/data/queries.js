@@ -45,6 +45,43 @@ export const commentNodeFieldsFragment = gql`
 `;
 
 // Queries
+export const headerMenuQuery = gql`
+    query {
+        menu(id: "header", idType: NAME) {
+            menuItems(first: 100) {
+                nodes {
+                    id
+                    parentId
+                    label
+                    url
+                }
+            }
+        }
+    }
+`;
+
+export const pagePathsQuery = gql`
+    query {
+        pages(first: 100, where: { status: PUBLISH }) {
+            nodes {
+                slug
+                modifiedGmt
+            }
+        }
+    }
+`;
+
+export const postPathsQuery = gql`
+    query {
+        posts(first: 100, where: { status: PUBLISH, orderby: { field: DATE, order: DESC } }) {
+            nodes {
+                uri
+                modifiedGmt
+            }
+        }
+    }
+`;
+
 export const pageQuery = gql`
     query ($slug: ID!) {
         page(id: $slug, idType: URI) {
