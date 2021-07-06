@@ -70,7 +70,6 @@ export function parseImages(text) {
 
                 if (!imageProps.alt) imageProps.alt = "";
 
-                // eslint-disable-next-line consistent-return
                 return (
                     <Image
                         {...imageProps}
