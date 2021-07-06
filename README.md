@@ -18,6 +18,8 @@ Pages are statically generated at build-time except for certain dynamic pages (s
 2. Run the development server: `npm run dev`
 3. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+Preferably, configure your IDE to run `eslint --fix` on save and prettier on code reformat and save for file extensions: `{**/*,*}.{js,ts,jsx,tsx}`.
+
 ## Deployment
 
 For a self-hosted server, it should be configured with Linux, Docker, and [webhook](https://github.com/adnanh/webhook). Docker must be configured as a swarm with a service for this app to handle rolling updates without build conflicts and load balancing.
