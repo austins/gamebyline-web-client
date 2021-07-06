@@ -37,7 +37,6 @@ export default function ClientApp({ Component, pageProps }) {
 
         const handleRouteChangeComplete = (url) => {
             stopNProgress();
-            window.scrollTo(0, 0); // Fixes Next.js router not always resetting the scroll.
             setGoogleAnalyticsPagePath(url);
         };
 
