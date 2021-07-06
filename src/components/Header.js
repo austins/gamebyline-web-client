@@ -71,12 +71,9 @@ export default function Header() {
                                     if (!menuItem.children.length) {
                                         return (
                                             <HeaderMenuItemLink key={menuItem.id} href={menuItem.url}>
-                                                <a
-                                                    className="nav-link"
-                                                    target={menuItem.isExternal ? "_blank" : "_self"}
-                                                >
+                                                <Nav.Link target={menuItem.isExternal ? "_blank" : "_self"}>
                                                     {menuItem.label}
-                                                </a>
+                                                </Nav.Link>
                                             </HeaderMenuItemLink>
                                         );
                                     }
