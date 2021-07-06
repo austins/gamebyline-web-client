@@ -1,17 +1,17 @@
-import isInt from 'validator/lib/isInt';
-import has from 'lodash/has';
-import useSWR from 'swr';
-import memoize from 'fast-memoize';
-import HeadWithTitle from '../../../components/HeadWithTitle';
-import Comments from '../../../components/Comments';
-import { postQuery, postPathsQuery } from '../../../lib/data/queries';
-import { graphqlFetcher } from '../../../lib/data/fetchers';
-import Post from '../../../components/Post';
+import isInt from "validator/lib/isInt";
+import has from "lodash/has";
+import useSWR from "swr";
+import memoize from "fast-memoize";
+import HeadWithTitle from "../../../components/HeadWithTitle";
+import Comments from "../../../components/Comments";
+import { postQuery, postPathsQuery } from "../../../lib/data/queries";
+import { graphqlFetcher } from "../../../lib/data/fetchers";
+import Post from "../../../components/Post";
 
-const getPostQueryVars = memoize(slug => ({ slug }));
+const getPostQueryVars = memoize((slug) => ({ slug }));
 
 export default function SinglePost({ slug, initialPostData }) {
-    const isCommentStatusOpen = initialPostData.post.commentStatus === 'open';
+    const isCommentStatusOpen = initialPostData.post.commentStatus === "open";
 
     const { data, mutate } = useSWR([postQuery, getPostQueryVars(slug)], graphqlFetcher, {
         initialData: initialPostData,
@@ -46,7 +46,7 @@ export async function getStaticProps({ params }) {
 
     const initialPostData = await graphqlFetcher(postQuery, getPostQueryVars(slug));
     if (
-        !has(initialPostData, 'post.id') ||
+        !has(initialPostData, "post.id") ||
         new Date(`${initialPostData.post.dateGmt}Z`).getUTCFullYear() !== Number.parseInt(year, 10)
     )
         return { notFound: true };
@@ -59,8 +59,8 @@ export async function getStaticPaths() {
 
     const posts = postsData.posts.nodes;
 
-    const paths = posts.map(post => {
-        const pathSplit = post.uri.split('/');
+    const paths = posts.map((post) => {
+        const pathSplit = post.uri.split("/");
         const year = pathSplit[2];
         const slug = pathSplit[3];
 
@@ -69,5 +69,5 @@ export async function getStaticPaths() {
         };
     });
 
-    return { fallback: 'blocking', paths };
+    return { fallback: "blocking", paths };
 }

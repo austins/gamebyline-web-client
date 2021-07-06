@@ -1,12 +1,12 @@
-import isInt from 'validator/lib/isInt';
-import { getPlaiceholder } from 'plaiceholder';
-import Posts from '../../components/Posts';
-import PostsPager from '../../components/PostsPager';
-import Breadcrumbs, { Crumb } from '../../components/Breadcrumbs';
-import HeadWithTitle from '../../components/HeadWithTitle';
-import { postsQuery } from '../../lib/data/queries';
-import { flattenEdges, generateFeaturedImagePlaceholders } from '../../lib/data/helpers';
-import { graphqlFetcher } from '../../lib/data/fetchers';
+import isInt from "validator/lib/isInt";
+import { getPlaiceholder } from "plaiceholder";
+import Posts from "../../components/Posts";
+import PostsPager from "../../components/PostsPager";
+import Breadcrumbs, { Crumb } from "../../components/Breadcrumbs";
+import HeadWithTitle from "../../components/HeadWithTitle";
+import { postsQuery } from "../../lib/data/queries";
+import { flattenEdges, generateFeaturedImagePlaceholders } from "../../lib/data/helpers";
+import { graphqlFetcher } from "../../lib/data/fetchers";
 
 export default function PostsBySearch({ search, page, postsData }) {
     const posts = flattenEdges(postsData.posts);

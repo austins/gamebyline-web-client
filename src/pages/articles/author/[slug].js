@@ -1,11 +1,11 @@
-import { gql } from 'graphql-request';
-import { getPlaiceholder } from 'plaiceholder';
-import Posts from '../../../components/Posts';
-import PostsPager from '../../../components/PostsPager';
-import HeadWithTitle from '../../../components/HeadWithTitle';
-import { postsQuery } from '../../../lib/data/queries';
-import { flattenEdges, generateFeaturedImagePlaceholders } from '../../../lib/data/helpers';
-import { graphqlFetcher } from '../../../lib/data/fetchers';
+import { gql } from "graphql-request";
+import { getPlaiceholder } from "plaiceholder";
+import Posts from "../../../components/Posts";
+import PostsPager from "../../../components/PostsPager";
+import HeadWithTitle from "../../../components/HeadWithTitle";
+import { postsQuery } from "../../../lib/data/queries";
+import { flattenEdges, generateFeaturedImagePlaceholders } from "../../../lib/data/helpers";
+import { graphqlFetcher } from "../../../lib/data/fetchers";
 
 export default function Author({ page, slug, postsData }) {
     const posts = flattenEdges(postsData.posts);
@@ -57,9 +57,9 @@ export async function getStaticPaths() {
 
     const users = usersData.users.nodes;
 
-    const paths = users.map(user => ({
+    const paths = users.map((user) => ({
         params: { slug: user.slug },
     }));
 
-    return { fallback: 'blocking', paths };
+    return { fallback: "blocking", paths };
 }

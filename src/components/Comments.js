@@ -1,15 +1,15 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import has from 'lodash/has';
-import { Fragment, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClock, faReply } from '@fortawesome/free-solid-svg-icons';
-import Moment from 'react-moment';
-import { Link as LinkScroll } from 'react-scroll';
-import defaultAvatar from '../../public/assets/images/default-comment-avatar.jpg';
-import styles from '../styles/Comments.module.scss';
-import { flattenEdges } from '../lib/data/helpers';
-import CommentForm from './CommentForm';
+import Link from "next/link";
+import Image from "next/image";
+import has from "lodash/has";
+import { Fragment, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClock, faReply } from "@fortawesome/free-solid-svg-icons";
+import Moment from "react-moment";
+import { Link as LinkScroll } from "react-scroll";
+import defaultAvatar from "../../public/assets/images/default-comment-avatar.jpg";
+import styles from "../styles/Comments.module.scss";
+import { flattenEdges } from "../lib/data/helpers";
+import CommentForm from "./CommentForm";
 
 function ReplyToCommentMetadata(databaseId, authorName) {
     this.databaseId = databaseId;
@@ -27,7 +27,7 @@ export default function Comments({ isCommentStatusOpen, postData, postMutate }) 
 
         // Get avatar image props.
         const avatarProps = { src: defaultAvatar, alt: author.name, quality: 100 };
-        if (has(author, 'avatar')) {
+        if (has(author, "avatar")) {
             const { avatar } = author;
 
             avatarProps.src = avatar.url;
@@ -38,10 +38,10 @@ export default function Comments({ isCommentStatusOpen, postData, postMutate }) 
             );
         }
 
-        const getAuthorLink = showAvatar => {
+        const getAuthorLink = (showAvatar) => {
             const authorLinkDisplay = showAvatar ? <Image {...avatarProps} /> : author.name;
 
-            if (has(author, 'slug') && has(author, 'posts.nodes[0].id')) {
+            if (has(author, "slug") && has(author, "posts.nodes[0].id")) {
                 return (
                     <Link href={`/articles/author/${author.slug}`} passHref>
                         <a>{authorLinkDisplay}</a>
@@ -53,7 +53,7 @@ export default function Comments({ isCommentStatusOpen, postData, postMutate }) 
         };
 
         // Get child comments.
-        const childComments = has(comment, 'replies.edges[0]') ? flattenEdges(comment.replies) : [];
+        const childComments = has(comment, "replies.edges[0]") ? flattenEdges(comment.replies) : [];
 
         return (
             <Fragment key={comment.id}>
@@ -68,7 +68,7 @@ export default function Comments({ isCommentStatusOpen, postData, postMutate }) 
                         </div>
                     )}
 
-                    <div className={isChildComment ? `flex-grow-1 ms-3` : 'flex-fill'}>
+                    <div className={isChildComment ? `flex-grow-1 ms-3` : "flex-fill"}>
                         <div className="d-flex align-items-center mb-1">
                             <div className="flex-shrink-0">{getAuthorLink(true)}</div>
 
@@ -112,7 +112,8 @@ export default function Comments({ isCommentStatusOpen, postData, postMutate }) 
                     </div>
                 </div>
 
-                {childComments.length > 0 && childComments.map(childComment => renderComment(childComment, level + 1))}
+                {childComments.length > 0 &&
+                    childComments.map((childComment) => renderComment(childComment, level + 1))}
             </Fragment>
         );
     };
@@ -121,7 +122,7 @@ export default function Comments({ isCommentStatusOpen, postData, postMutate }) 
         <section id="comments">
             <h3>Comments</h3>
 
-            {displayedComments.length > 0 && <div>{displayedComments.map(comment => renderComment(comment, 1))}</div>}
+            {displayedComments.length > 0 && <div>{displayedComments.map((comment) => renderComment(comment, 1))}</div>}
 
             <CommentForm
                 isCommentStatusOpen={isCommentStatusOpen}

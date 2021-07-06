@@ -1,7 +1,7 @@
-import { gql } from 'graphql-request';
-import nc from 'next-connect';
-import { StatusCodes } from 'http-status-codes';
-import { getGraphqlClient } from '../../lib/data/fetchers';
+import { gql } from "graphql-request";
+import nc from "next-connect";
+import { StatusCodes } from "http-status-codes";
+import { getGraphqlClient } from "../../lib/data/fetchers";
 
 const handler = nc().get(async (req, res) => {
     const userData = await getGraphqlClient(req.headers.cookie).request(gql`

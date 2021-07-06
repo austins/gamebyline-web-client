@@ -1,8 +1,8 @@
-import { Feed } from 'feed';
-import striptags from 'striptags';
-import { postsQuery } from '../../../lib/data/queries';
-import { flattenEdges } from '../../../lib/data/helpers';
-import { graphqlFetcher } from '../../../lib/data/fetchers';
+import { Feed } from "feed";
+import striptags from "striptags";
+import { postsQuery } from "../../../lib/data/queries";
+import { flattenEdges } from "../../../lib/data/helpers";
+import { graphqlFetcher } from "../../../lib/data/fetchers";
 
 export default function ArticlesRssFeed() {}
 
@@ -12,17 +12,17 @@ export async function getServerSideProps({ req, res }) {
     const posts = flattenEdges(postsData.posts);
     const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
     const siteLink =
-        process.env.NEXT_PUBLIC_SITE_URL ?? `${req.headers['x-forwarded-proto'] ?? 'http'}://${req.headers.host}`;
+        process.env.NEXT_PUBLIC_SITE_URL ?? `${req.headers["x-forwarded-proto"] ?? "http"}://${req.headers.host}`;
 
     const feed = new Feed({
         description: `Latest articles from ${siteName}.`,
-        language: 'en',
+        language: "en",
         link: siteLink,
         title: siteName,
         updated: posts.length ? new Date(`${posts[0].dateGmt}Z`) : null,
     });
 
-    posts.forEach(post => {
+    posts.forEach((post) => {
         const postDate = new Date(`${post.dateGmt}Z`);
         const postLink = new URL(`/article/${postDate.getUTCFullYear()}/${post.slug}`, siteLink).href;
 
@@ -37,7 +37,7 @@ export async function getServerSideProps({ req, res }) {
         });
     });
 
-    res.setHeader('Content-Type', 'text/xml');
+    res.setHeader("Content-Type", "text/xml");
     res.write(feed.rss2());
     res.end();
 

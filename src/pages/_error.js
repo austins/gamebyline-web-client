@@ -1,5 +1,5 @@
-import { StatusCodes } from 'http-status-codes';
-import Error from '../components/Error';
+import { StatusCodes } from "http-status-codes";
+import Error from "../components/Error";
 
 function CustomError({ statusCode }) {
     return <Error statusCode={statusCode} />;

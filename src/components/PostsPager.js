@@ -1,11 +1,11 @@
-import { ButtonGroup } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import styles from '../styles/PostsPager.module.scss';
-import PostsPagerButton from './PostsPagerButton';
+import { ButtonGroup } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import styles from "../styles/PostsPager.module.scss";
+import PostsPagerButton from "./PostsPagerButton";
 
 export default function PostsPager({ authorSlug, categorySlug, hasMore, hasPrevious, page, search }) {
-    const articlesPath = '/articles';
+    const articlesPath = "/articles";
     const pathnameBase = categorySlug
         ? `${articlesPath}/topic/${categorySlug}`
         : authorSlug
@@ -14,10 +14,10 @@ export default function PostsPager({ authorSlug, categorySlug, hasMore, hasPrevi
 
     const paths = {
         hasMorePath: {
-            pathname: hasMore && !search ? `${pathnameBase}/${page + 1}` : search ? articlesPath : '#',
+            pathname: hasMore && !search ? `${pathnameBase}/${page + 1}` : search ? articlesPath : "#",
         },
         hasPreviousPath: {
-            pathname: hasPrevious && !search ? `${pathnameBase}/${page - 1}` : search ? articlesPath : '#',
+            pathname: hasPrevious && !search ? `${pathnameBase}/${page - 1}` : search ? articlesPath : "#",
         },
     };
 

@@ -1,13 +1,13 @@
-import isInt from 'validator/lib/isInt';
-import { gql } from 'graphql-request';
-import { getPlaiceholder } from 'plaiceholder';
-import Posts from '../../../../components/Posts';
-import Breadcrumbs, { Crumb } from '../../../../components/Breadcrumbs';
-import PostsPager from '../../../../components/PostsPager';
-import HeadWithTitle from '../../../../components/HeadWithTitle';
-import { postsQuery } from '../../../../lib/data/queries';
-import { flattenEdges, generateFeaturedImagePlaceholders } from '../../../../lib/data/helpers';
-import { graphqlFetcher } from '../../../../lib/data/fetchers';
+import isInt from "validator/lib/isInt";
+import { gql } from "graphql-request";
+import { getPlaiceholder } from "plaiceholder";
+import Posts from "../../../../components/Posts";
+import Breadcrumbs, { Crumb } from "../../../../components/Breadcrumbs";
+import PostsPager from "../../../../components/PostsPager";
+import HeadWithTitle from "../../../../components/HeadWithTitle";
+import { postsQuery } from "../../../../lib/data/queries";
+import { flattenEdges, generateFeaturedImagePlaceholders } from "../../../../lib/data/helpers";
+import { graphqlFetcher } from "../../../../lib/data/fetchers";
 
 export default function AuthorByPage({ page, slug, postsData }) {
     const posts = flattenEdges(postsData.posts);
@@ -93,5 +93,5 @@ export async function getStaticPaths() {
         }
     }
 
-    return { fallback: 'blocking', paths };
+    return { fallback: "blocking", paths };
 }

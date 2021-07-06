@@ -1,14 +1,14 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClock, faComments, faTag, faUser } from '@fortawesome/free-solid-svg-icons';
-import Link from 'next/link';
-import Moment from 'react-moment';
-import { Link as LinkScroll } from 'react-scroll';
-import { SRLWrapper } from 'simple-react-lightbox';
-import Image from 'next/image';
-import parse from 'html-react-parser';
-import isUndefined from 'lodash/isUndefined';
-import { parseImages } from '../lib/data/helpers';
-import styles from '../styles/Post.module.scss';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClock, faComments, faTag, faUser } from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
+import Moment from "react-moment";
+import { Link as LinkScroll } from "react-scroll";
+import { SRLWrapper } from "simple-react-lightbox";
+import Image from "next/image";
+import parse from "html-react-parser";
+import isUndefined from "lodash/isUndefined";
+import { parseImages } from "../lib/data/helpers";
+import styles from "../styles/Post.module.scss";
 
 export default function Post({ post, parseContent = false }) {
     return (
@@ -48,7 +48,7 @@ export default function Post({ post, parseContent = false }) {
                             <FontAwesomeIcon icon={faComments} />
                             <LinkScroll href="#comments" to="comments" smooth duration={100}>
                                 {post.commentCount > 0 && `${post.commentCount} `}
-                                {post.commentCount === 1 ? 'Comment' : 'Comments'}
+                                {post.commentCount === 1 ? "Comment" : "Comments"}
                             </LinkScroll>
                         </span>
                     )}

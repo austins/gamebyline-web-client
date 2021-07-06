@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import rfdc from 'rfdc';
-import useSWR from 'swr';
-import has from 'lodash/has';
-import { Alert, Button, Col, Form, Row } from 'react-bootstrap';
-import { Link as LinkScroll } from 'react-scroll';
-import { restFetcher } from '../lib/data/fetchers';
+import { useState } from "react";
+import rfdc from "rfdc";
+import useSWR from "swr";
+import has from "lodash/has";
+import { Alert, Button, Col, Form, Row } from "react-bootstrap";
+import { Link as LinkScroll } from "react-scroll";
+import { restFetcher } from "../lib/data/fetchers";
 
 export default function CommentForm({
     isCommentStatusOpen,
@@ -13,24 +13,24 @@ export default function CommentForm({
     replyToCommentMetadata,
     setReplyToCommentMetadata,
 }) {
-    const { data: userData } = useSWR(isCommentStatusOpen ? '/api/user' : null, restFetcher, {
+    const { data: userData } = useSWR(isCommentStatusOpen ? "/api/user" : null, restFetcher, {
         revalidateOnFocus: true,
     });
-    const isLoggedIn = userData && has(userData, 'name');
+    const isLoggedIn = userData && has(userData, "name");
 
-    const [commentFormName, setCommentFormName] = useState('');
-    const [commentFormEmail, setCommentFormEmail] = useState('');
-    const [commentFormMessage, setCommentFormMessage] = useState('');
+    const [commentFormName, setCommentFormName] = useState("");
+    const [commentFormEmail, setCommentFormEmail] = useState("");
+    const [commentFormMessage, setCommentFormMessage] = useState("");
     const [submitCommentSuccess, setSubmitCommentSuccess] = useState(null);
-    const [submitCommentError, setSubmitCommentError] = useState('');
+    const [submitCommentError, setSubmitCommentError] = useState("");
     const [createdCommentId, setCreatedCommentId] = useState(null);
 
-    const submitComment = e => {
+    const submitComment = (e) => {
         e.preventDefault();
 
-        fetch('/api/comments', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+        fetch("/api/comments", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 commentOnDatabaseId: postData.post.databaseId,
                 author: isLoggedIn ? null : commentFormName,
@@ -39,8 +39,8 @@ export default function CommentForm({
                 parentDatabaseId: replyToCommentMetadata ? replyToCommentMetadata.databaseId : null,
             }),
         })
-            .then(res => res.json())
-            .then(async data => {
+            .then((res) => res.json())
+            .then(async (data) => {
                 if (data.error) {
                     setSubmitCommentError(data.error.message);
                     setSubmitCommentSuccess(false);
@@ -48,9 +48,9 @@ export default function CommentForm({
                 }
 
                 setReplyToCommentMetadata(null);
-                setCommentFormName('');
-                setCommentFormEmail('');
-                setCommentFormMessage('');
+                setCommentFormName("");
+                setCommentFormEmail("");
+                setCommentFormMessage("");
 
                 if (data.success) {
                     const postDataCopy = rfdc({ proto: true })(postData);
@@ -62,7 +62,7 @@ export default function CommentForm({
                         postDataCopy.post.comments.edges.push({ node: comment });
                     } else {
                         const parentCommentIndex = postDataCopy.post.comments.edges.findIndex(
-                            c => c.node.id === comment.parentId
+                            (c) => c.node.id === comment.parentId
                         );
 
                         postDataCopy.post.comments.edges[parentCommentIndex].node.replies.edges.push({
@@ -72,12 +72,12 @@ export default function CommentForm({
 
                     postMutate(postDataCopy, false);
                     setCreatedCommentId(comment.id);
-                    setSubmitCommentError('');
+                    setSubmitCommentError("");
                     setSubmitCommentSuccess(true);
                 }
             })
             .catch(() => {
-                setSubmitCommentError('There was an error posting your comment. Please try again.');
+                setSubmitCommentError("There was an error posting your comment. Please try again.");
                 setSubmitCommentSuccess(false);
             });
     };
@@ -87,7 +87,7 @@ export default function CommentForm({
             <h4>
                 {(isCommentStatusOpen && replyToCommentMetadata !== null && (
                     <>
-                        Replying to {replyToCommentMetadata.authorName}{' '}
+                        Replying to {replyToCommentMetadata.authorName}{" "}
                         <Button variant="outline-primary" size="sm" onClick={() => setReplyToCommentMetadata(null)}>
                             Cancel Reply
                         </Button>
@@ -99,10 +99,10 @@ export default function CommentForm({
                 {(isCommentStatusOpen && (
                     <>
                         {submitCommentSuccess !== null && (
-                            <Alert variant={submitCommentSuccess === true ? 'success' : 'danger'}>
+                            <Alert variant={submitCommentSuccess === true ? "success" : "danger"}>
                                 {(submitCommentSuccess === true && (
                                     <>
-                                        Your comment has been posted successfully!{' '}
+                                        Your comment has been posted successfully!{" "}
                                         <LinkScroll
                                             href={`#comment-${createdCommentId}`}
                                             to={`comment-${createdCommentId}`}
@@ -129,7 +129,7 @@ export default function CommentForm({
                                         <Form.Control
                                             type="text"
                                             value={commentFormName}
-                                            onChange={e => setCommentFormName(e.target.value)}
+                                            onChange={(e) => setCommentFormName(e.target.value)}
                                             required
                                         />
                                     </Form.Group>
@@ -140,7 +140,7 @@ export default function CommentForm({
                                         <Form.Control
                                             type="email"
                                             value={commentFormEmail}
-                                            onChange={e => setCommentFormEmail(e.target.value)}
+                                            onChange={(e) => setCommentFormEmail(e.target.value)}
                                             required
                                         />
                                     </Form.Group>
@@ -151,9 +151,9 @@ export default function CommentForm({
                                 <Form.Label>Message</Form.Label>
                                 <Form.Control
                                     as="textarea"
-                                    style={{ height: '100px' }}
+                                    style={{ height: "100px" }}
                                     value={commentFormMessage}
-                                    onChange={e => setCommentFormMessage(e.target.value)}
+                                    onChange={(e) => setCommentFormMessage(e.target.value)}
                                     required
                                 />
                             </Form.Group>

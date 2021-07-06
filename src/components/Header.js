@@ -1,31 +1,31 @@
-import { Button, Container, Form, FormControl, InputGroup, Nav, Navbar, NavDropdown } from 'react-bootstrap';
-import Link from 'next/link';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useRouter } from 'next/router';
-import Image from 'next/image';
-import useSWR, { mutate } from 'swr';
-import get from 'lodash/get';
-import isObject from 'lodash/isObject';
-import has from 'lodash/has';
-import logoLight from '../../public/assets/images/logo-light.png';
-import HeaderMenuItemLink from './HeaderMenuItemLink';
-import styles from '../styles/Header.module.scss';
-import { mapMenuItemsChildrenToParents } from '../lib/data/helpers';
-import { graphqlFetcher } from '../lib/data/fetchers';
-import { headerMenuQuery } from '../lib/data/queries';
+import { Button, Container, Form, FormControl, InputGroup, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import Link from "next/link";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from "next/router";
+import Image from "next/image";
+import useSWR, { mutate } from "swr";
+import get from "lodash/get";
+import isObject from "lodash/isObject";
+import has from "lodash/has";
+import logoLight from "../../public/assets/images/logo-light.png";
+import HeaderMenuItemLink from "./HeaderMenuItemLink";
+import styles from "../styles/Header.module.scss";
+import { mapMenuItemsChildrenToParents } from "../lib/data/helpers";
+import { graphqlFetcher } from "../lib/data/fetchers";
+import { headerMenuQuery } from "../lib/data/queries";
 
 export default function Header() {
     const router = useRouter();
 
     // Get menu items.
-    const headerMenuDataCacheKey = 'headerMenuData';
-    if (typeof window !== 'undefined') {
+    const headerMenuDataCacheKey = "headerMenuData";
+    if (typeof window !== "undefined") {
         const headerMenuDataCache = localStorage.getItem(headerMenuDataCacheKey);
         if (headerMenuDataCache) {
             try {
                 const parsedHeaderMenuDataCache = JSON.parse(headerMenuDataCache);
-                if (isObject(parsedHeaderMenuDataCache) && has(parsedHeaderMenuDataCache, 'menu.menuItems.nodes'))
+                if (isObject(parsedHeaderMenuDataCache) && has(parsedHeaderMenuDataCache, "menu.menuItems.nodes"))
                     mutate(headerMenuQuery, parsedHeaderMenuDataCache, false);
             } catch {
                 // Do nothing if headerMenuDataCache is invalid.
@@ -35,20 +35,20 @@ export default function Header() {
 
     const { data: headerMenuData } = useSWR(headerMenuQuery, graphqlFetcher, {
         revalidateOnMount: true,
-        onSuccess: fetchedHeaderMenuData =>
+        onSuccess: (fetchedHeaderMenuData) =>
             localStorage.setItem(headerMenuDataCacheKey, JSON.stringify(fetchedHeaderMenuData)),
     });
 
-    let menuItems = get(headerMenuData ?? {}, 'menu.menuItems.nodes', []);
+    let menuItems = get(headerMenuData ?? {}, "menu.menuItems.nodes", []);
     if (menuItems.length) menuItems = mapMenuItemsChildrenToParents(menuItems);
 
-    const search = e => {
+    const search = (e) => {
         e.preventDefault();
 
         const searchValue = e.target.search.value.trim();
         if (searchValue.length) {
-            router.push({ pathname: '/articles', query: { search: searchValue } });
-            e.target.search.value = '';
+            router.push({ pathname: "/articles", query: { search: searchValue } });
+            e.target.search.value = "";
         }
     };
 
@@ -67,13 +67,13 @@ export default function Header() {
                     <Navbar.Collapse id="navbar-collapse">
                         <Nav className="me-auto">
                             {menuItems.length > 0 &&
-                                menuItems.map(menuItem => {
+                                menuItems.map((menuItem) => {
                                     if (!menuItem.children.length) {
                                         return (
                                             <HeaderMenuItemLink key={menuItem.id} href={menuItem.url}>
                                                 <a
                                                     className="nav-link"
-                                                    target={menuItem.isExternal ? '_blank' : '_self'}
+                                                    target={menuItem.isExternal ? "_blank" : "_self"}
                                                 >
                                                     {menuItem.label}
                                                 </a>
@@ -83,10 +83,10 @@ export default function Header() {
 
                                     return (
                                         <NavDropdown key={menuItem.id} id={menuItem.id} title={menuItem.label}>
-                                            {menuItem.children.map(childMenuItem => (
+                                            {menuItem.children.map((childMenuItem) => (
                                                 <HeaderMenuItemLink key={childMenuItem.id} href={childMenuItem.url}>
                                                     <NavDropdown.Item
-                                                        target={childMenuItem.isExternal ? '_blank' : '_self'}
+                                                        target={childMenuItem.isExternal ? "_blank" : "_self"}
                                                     >
                                                         {childMenuItem.label}
                                                     </NavDropdown.Item>

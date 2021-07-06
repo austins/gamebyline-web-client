@@ -1,11 +1,11 @@
-import he from 'he';
-import { gql } from 'graphql-request';
-import has from 'lodash/has';
-import nc from 'next-connect';
-import { ReasonPhrases, StatusCodes } from 'http-status-codes';
-import isString from 'lodash/isString';
-import { commentNodeFieldsFragment } from '../../lib/data/queries';
-import { getGraphqlClient } from '../../lib/data/fetchers';
+import he from "he";
+import { gql } from "graphql-request";
+import has from "lodash/has";
+import nc from "next-connect";
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
+import isString from "lodash/isString";
+import { commentNodeFieldsFragment } from "../../lib/data/queries";
+import { getGraphqlClient } from "../../lib/data/fetchers";
 
 const handler = nc().post(async (req, res) => {
     const { commentOnDatabaseId, content, author = null, authorEmail = null, parentDatabaseId = null } = req.body;
@@ -54,9 +54,9 @@ const handler = nc().post(async (req, res) => {
     } catch (error) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             error: {
-                message: has(error, 'response.errors[0].message')
+                message: has(error, "response.errors[0].message")
                     ? he.decode(error.response.errors[0].message)
-                    : 'There was an error creating your comment. Please try again.',
+                    : "There was an error creating your comment. Please try again.",
             },
         });
     }

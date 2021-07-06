@@ -1,9 +1,9 @@
-import { getServerSideSitemap } from 'next-sitemap';
-import has from 'lodash/has';
-import { graphqlFetcher } from '../lib/data/fetchers';
-import { pagePathsQuery, postPathsQuery } from '../lib/data/queries';
+import { getServerSideSitemap } from "next-sitemap";
+import has from "lodash/has";
+import { graphqlFetcher } from "../lib/data/fetchers";
+import { pagePathsQuery, postPathsQuery } from "../lib/data/queries";
 
-function SitemapUrl(loc, lastmod, priority = '0.5', changefreq = 'daily') {
+function SitemapUrl(loc, lastmod, priority = "0.5", changefreq = "daily") {
     this.loc = loc;
     this.lastmod = lastmod;
     this.priority = priority;
@@ -24,20 +24,20 @@ export async function getServerSideProps(context) {
     fields.push(
         new SitemapUrl(
             siteUrl,
-            has(postsData, 'posts.nodes[0].modifiedGmt')
+            has(postsData, "posts.nodes[0].modifiedGmt")
                 ? new Date(`${postsData.posts.nodes[0].modifiedGmt}Z`).toISOString()
                 : new Date().toISOString()
         )
     );
 
     // Page urls.
-    pagesData.pages.nodes.forEach(page => {
-        fields.push(new SitemapUrl(`${siteUrl}/${page.slug}`, new Date(`${page.modifiedGmt}Z`).toISOString(), '0.7'));
+    pagesData.pages.nodes.forEach((page) => {
+        fields.push(new SitemapUrl(`${siteUrl}/${page.slug}`, new Date(`${page.modifiedGmt}Z`).toISOString(), "0.7"));
     });
 
     // Post urls.
-    postsData.posts.nodes.forEach(post => {
-        fields.push(new SitemapUrl(`${siteUrl}${post.uri}`, new Date(`${post.modifiedGmt}Z`).toISOString(), '0.7'));
+    postsData.posts.nodes.forEach((post) => {
+        fields.push(new SitemapUrl(`${siteUrl}${post.uri}`, new Date(`${post.modifiedGmt}Z`).toISOString(), "0.7"));
     });
 
     return getServerSideSitemap(context, fields);

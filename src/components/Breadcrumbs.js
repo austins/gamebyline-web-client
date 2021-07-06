@@ -1,5 +1,5 @@
-import { Breadcrumb } from 'react-bootstrap';
-import Link from 'next/link';
+import { Breadcrumb } from "react-bootstrap";
+import Link from "next/link";
 
 export default function Breadcrumbs({ crumbs }) {
     return (
@@ -9,7 +9,7 @@ export default function Breadcrumbs({ crumbs }) {
             </Link>
 
             {Array.isArray(crumbs) &&
-                crumbs.map(crumb => (
+                crumbs.map((crumb) => (
                     <Link key={crumb.path} href={crumb.path} passHref>
                         <Breadcrumb.Item>{crumb.label}</Breadcrumb.Item>
                     </Link>

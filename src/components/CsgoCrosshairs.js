@@ -1,5 +1,5 @@
-import { Table } from 'react-bootstrap';
-import Image from 'next/image';
+import { Table } from "react-bootstrap";
+import Image from "next/image";
 
 export default function CsgoCrosshairs({ csgoCrosshairs }) {
     return (
@@ -15,7 +15,7 @@ export default function CsgoCrosshairs({ csgoCrosshairs }) {
 
             <tbody>
                 {csgoCrosshairs.length > 0 &&
-                    csgoCrosshairs.map(csgoCrosshair => (
+                    csgoCrosshairs.map((csgoCrosshair) => (
                         <tr key={csgoCrosshair.id}>
                             <td>
                                 {csgoCrosshair.featuredImage && (

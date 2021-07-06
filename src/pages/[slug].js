@@ -1,10 +1,10 @@
-import HeadWithTitle from '../components/HeadWithTitle';
-import { csgoCrosshairsQuery, pagePathsQuery, pageQuery } from '../lib/data/queries';
-import { graphqlFetcher } from '../lib/data/fetchers';
-import CsgoCrosshairs from '../components/CsgoCrosshairs';
-import Page from '../components/Page';
+import HeadWithTitle from "../components/HeadWithTitle";
+import { csgoCrosshairsQuery, pagePathsQuery, pageQuery } from "../lib/data/queries";
+import { graphqlFetcher } from "../lib/data/fetchers";
+import CsgoCrosshairs from "../components/CsgoCrosshairs";
+import Page from "../components/Page";
 
-const csgoCrosshairsSlug = 'csgo-crosshairs';
+const csgoCrosshairsSlug = "csgo-crosshairs";
 
 export default function SinglePage({ pageData, csgoCrosshairsData }) {
     const { page } = pageData;
@@ -46,9 +46,9 @@ export async function getStaticPaths() {
 
     const pages = pageData.pages.nodes;
 
-    const paths = pages.map(page => ({
+    const paths = pages.map((page) => ({
         params: { slug: page.slug },
     }));
 
-    return { fallback: 'blocking', paths };
+    return { fallback: "blocking", paths };
 }

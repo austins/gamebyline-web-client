@@ -1,8 +1,8 @@
-import { has } from 'lodash';
-import parse, { attributesToProps } from 'html-react-parser';
-import pick from 'lodash/pick';
-import Image from 'next/image';
-import isString from 'lodash/isString';
+import { has } from "lodash";
+import parse, { attributesToProps } from "html-react-parser";
+import pick from "lodash/pick";
+import Image from "next/image";
+import isString from "lodash/isString";
 
 export function flattenEdges(data) {
     return data.edges.reduce((accumulator, obj) => {
@@ -17,7 +17,7 @@ export function mapMenuItemsChildrenToParents(menuItemsNodes) {
     const tree = [];
     const childrenOf = {};
 
-    menuItemsNodes.forEach(item => {
+    menuItemsNodes.forEach((item) => {
         const newItem = { ...item };
 
         if (newItem.url !== null) {
@@ -44,7 +44,7 @@ export function mapMenuItemsChildrenToParents(menuItemsNodes) {
 export async function generateFeaturedImagePlaceholders(getPlaiceholder, postsEdges) {
     for (const edge of postsEdges) {
         const post = edge.node;
-        if (has(post, 'featuredImage.node.mediaItemUrl')) {
+        if (has(post, "featuredImage.node.mediaItemUrl")) {
             const { base64 } = await getPlaiceholder(post.featuredImage.node.mediaItemUrl);
             post.featuredImage.node.blurDataURL = base64;
         }
@@ -52,23 +52,23 @@ export async function generateFeaturedImagePlaceholders(getPlaiceholder, postsEd
 }
 
 export function parseImages(text) {
-    if (!isString(text) || text === '') return '';
+    if (!isString(text) || text === "") return "";
 
     return parse(text, {
         replace: ({ name, attribs, parent }) => {
-            const allowedParentDomNodes = ['figure', 'div', 'a'];
-            if (name === 'img' && allowedParentDomNodes.includes(parent.name) && attribs) {
-                const imageProps = attributesToProps(pick(attribs, ['class', 'src', 'width', 'height', 'alt']));
+            const allowedParentDomNodes = ["figure", "div", "a"];
+            if (name === "img" && allowedParentDomNodes.includes(parent.name) && attribs) {
+                const imageProps = attributesToProps(pick(attribs, ["class", "src", "width", "height", "alt"]));
 
                 if (
                     !imageProps.className ||
-                    !imageProps.className.split(' ').some(className => className.startsWith('wp-image-')) ||
+                    !imageProps.className.split(" ").some((className) => className.startsWith("wp-image-")) ||
                     !imageProps.width ||
                     !imageProps.height
                 )
                     return;
 
-                if (!imageProps.alt) imageProps.alt = '';
+                if (!imageProps.alt) imageProps.alt = "";
 
                 // eslint-disable-next-line consistent-return
                 return (

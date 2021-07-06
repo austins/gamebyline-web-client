@@ -1,10 +1,10 @@
-import { Card, Col, Row } from 'react-bootstrap';
-import Link from 'next/link';
-import { faClock, faTag } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Moment from 'react-moment';
-import Image from 'next/image';
-import styles from '../styles/Posts.module.scss';
+import { Card, Col, Row } from "react-bootstrap";
+import Link from "next/link";
+import { faClock, faTag } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Moment from "react-moment";
+import Image from "next/image";
+import styles from "../styles/Posts.module.scss";
 
 export default function Posts({ authorName, categoryName, posts, search }) {
     return (
@@ -14,7 +14,7 @@ export default function Posts({ authorName, categoryName, posts, search }) {
                 (search && <h1>Search: {search}</h1>)}
 
             <Row xs="1" sm="2" lg="3" className="g-4">
-                {posts.map(post => {
+                {posts.map((post) => {
                     const date = new Date(`${post.dateGmt}Z`);
                     const link = `/article/${date.getUTCFullYear()}/${post.slug}`;
 

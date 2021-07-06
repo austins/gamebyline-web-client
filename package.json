@@ -6,7 +6,7 @@
         "build": "next build",
         "postbuild": "next-sitemap --config next-sitemap.config.js",
         "start": "next start",
-        "lint": "next lint . --fix --ext .js"
+        "format": "npx prettier --write . && next lint . --fix --ext .js --ext .ts --ext .jsx --ext .tsx"
     },
     "engines": {
         "node": ">=14.17.0"
@@ -48,10 +48,10 @@
         "validator": "^13.6.0"
     },
     "devDependencies": {
-        "@ijsto/eslint-config": "^4.1.6",
-        "@next/eslint-plugin-next": "^11.0.1",
         "eslint": "^7.30.0",
         "eslint-config-next": "^11.0.1",
+        "eslint-config-prettier": "^8.3.0",
+        "prettier": "2.3.2",
         "sass": "~1.32.12"
     }
 }

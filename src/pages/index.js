@@ -1,10 +1,10 @@
-import { getPlaiceholder } from 'plaiceholder';
-import Posts from '../components/Posts';
-import PostsPager from '../components/PostsPager';
-import HeadWithTitle from '../components/HeadWithTitle';
-import { postsQuery } from '../lib/data/queries';
-import { flattenEdges, generateFeaturedImagePlaceholders } from '../lib/data/helpers';
-import { graphqlFetcher } from '../lib/data/fetchers';
+import { getPlaiceholder } from "plaiceholder";
+import Posts from "../components/Posts";
+import PostsPager from "../components/PostsPager";
+import HeadWithTitle from "../components/HeadWithTitle";
+import { postsQuery } from "../lib/data/queries";
+import { flattenEdges, generateFeaturedImagePlaceholders } from "../lib/data/helpers";
+import { graphqlFetcher } from "../lib/data/fetchers";
 
 export default function Home({ postsData }) {
     const posts = flattenEdges(postsData.posts);
