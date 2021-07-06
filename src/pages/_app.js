@@ -15,14 +15,6 @@ import Footer from "../components/Footer";
 export default function ClientApp({ Component, pageProps }) {
     const router = useRouter();
 
-    const setGoogleAnalyticsPagePath = (url) => {
-        if (process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID && typeof window !== "undefined" && window.gtag) {
-            window.gtag("config", process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID, {
-                page_path: url,
-            });
-        }
-    };
-
     useEffect(() => {
         // NProgress handlers.
         const startNProgress = debounce(NProgress.start, 300);
@@ -31,11 +23,21 @@ export default function ClientApp({ Component, pageProps }) {
             NProgress.done();
         };
 
+        // Google Analytics page path handler.
+        const setGoogleAnalyticsPagePath = (url) => {
+            if (process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID && window.gtag) {
+                window.gtag("config", process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID, {
+                    page_path: url,
+                });
+            }
+        };
+
         // Router change handlers.
         const handleRouteChangeStart = () => startNProgress();
 
         const handleRouteChangeComplete = (url) => {
             stopNProgress();
+            window.scrollTo(0, 0); // Fixes Next.js router not always resetting the scroll.
             setGoogleAnalyticsPagePath(url);
         };
 
