@@ -2,7 +2,7 @@ import Head from "next/head";
 import isString from "lodash/isString";
 import parse from "html-react-parser";
 
-export default function HeadWithTitle({ title, noIndex, innerHTMLString, children }) {
+export default function HeadWithTitle({ title, noIndex, description, innerHTMLString, children }) {
     return (
         <Head>
             <title>
@@ -29,6 +29,8 @@ export default function HeadWithTitle({ title, noIndex, innerHTMLString, childre
             )}
 
             {noIndex && <meta name="robots" content="noindex" />}
+
+            {description && <meta name="description" content={description} />}
 
             {innerHTMLString &&
                 parse(innerHTMLString.replace("/?s=", "/articles/?search="), {

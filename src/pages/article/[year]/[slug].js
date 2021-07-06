@@ -28,7 +28,11 @@ export default function SinglePost({ slug, initialPostData }) {
 
     return (
         <>
-            <HeadWithTitle title={post.title} innerHTMLString={post.seo.fullHead} />
+            <HeadWithTitle
+                title={post.title}
+                description={post.seo.opengraphDescription}
+                innerHTMLString={post.seo.fullHead}
+            />
 
             <Post post={post} parseContent />
 

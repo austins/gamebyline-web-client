@@ -12,7 +12,7 @@ export default function Home({ postsData }) {
 
     return (
         <>
-            <HeadWithTitle />
+            <HeadWithTitle description={postsData.generalSettings.description} />
 
             <Posts posts={posts} />
 

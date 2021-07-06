@@ -19,7 +19,7 @@ export default function PostsByPage({ page, postsData }) {
 
     return (
         <>
-            <HeadWithTitle title="Articles" />
+            <HeadWithTitle title="Articles" description={postsData.generalSettings.description} />
 
             <Breadcrumbs crumbs={crumbs} />
 

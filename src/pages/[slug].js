@@ -15,7 +15,11 @@ export default function SinglePage({ pageData, csgoCrosshairsData }) {
 
     return (
         <>
-            <HeadWithTitle title={page.title} innerHTMLString={page.seo.fullHead} />
+            <HeadWithTitle
+                title={page.title}
+                description={page.seo.opengraphDescription}
+                innerHTMLString={page.seo.fullHead}
+            />
 
             <Page page={page} parseContent />
 
