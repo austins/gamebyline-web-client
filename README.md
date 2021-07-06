@@ -4,7 +4,7 @@ The frontend for _[Game Byline](https://gamebyline.com)_, powered by Next.js, Re
 
 The goal of this project is to abstract the frontend away from WordPress, improve performance (such as time to first byte), eliminate the usage of frontend plugins that slow down WordPress, and allow further customization for the intended website.
 
-Pages are statically generated at build-time except for the search page. They may be server-side rendered during revalidation or if a requested page doesn't exist. This app is required to be rebuilt when content is changed in the WordPress backend.
+Pages are statically generated at build-time except for certain dynamic pages (search, preview, RSS feed, server sitemap). They may be server-side rendered during revalidation or if a requested page doesn't exist. This app is required to be rebuilt when the code is updated. Content changed in the WordPress backend relies on Incremental Static Regeneration.
 
 ## Requirements
 
@@ -20,19 +20,11 @@ Pages are statically generated at build-time except for the search page. They ma
 
 ## Deployment
 
-Dockerization is WIP.
+For a self-hosted server, it should be configured with Linux, Docker, and [webhook](https://github.com/adnanh/webhook). Docker must be configured as a swarm with a service for this app to handle rolling updates without build conflicts and load balancing.
 
-For a self-hosted server, it should be configured with Linux, [Node.js (LTS)](https://github.com/nodesource/distributions/blob/master/README.md) with [pm2](https://github.com/Unitech/pm2) installed, and [webhook](https://github.com/adnanh/webhook).
-- After cloning the repo onto the server, create a `.env.local` and `ecosystem.config.js` file (see the provided example files) with the environment variables set. Run `npm ci && npm run build` and then `pm2 start ecosystem.config.js` to start the app with load-balancing. The server can be configured to auto-start the app with pm2.
-- webhook must be set up to run a script to run `git pull && npm ci && npm run build && pm2 reload gamebyline-web-client`.
+The service must have three environment variables configured: `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_API_GRAPHQL_URL`, and `NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID`. Optionally, a bind mount targeting `/app/.next/cache` can be added to persist cached images.
 
-With the above configuration, continuous delivery of new code changes can be achieved by:
-1. Pushing changes to `master` branch of this repo.
-2. GitHub posts to a set webhook.
-3. Server receives webhook post and runs a script to pull, build, and reload the app.
-4. Changes will appear on the website within minutes with zero-downtime thanks to the pm2 cluster load-balancing.
-
-WordPress should be configured to post to a webhook as well when posts are changed.
+In this repo, a GitHub Actions workflow builds a Docker image, pushes it to a private registry, and posts to a webhook on the server that pulls the latest image and updates the Docker service. This process allows for continuous deployment.
 
 ## License
 
