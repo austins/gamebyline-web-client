@@ -1,9 +1,8 @@
 import he from "he";
 import { gql } from "graphql-request";
-import has from "lodash/has";
+import { has, isString } from "lodash";
 import nc from "next-connect";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
-import isString from "lodash/isString";
 import { commentNodeFieldsFragment } from "../../lib/data/queries";
 import { getGraphqlClient } from "../../lib/data/fetchers";
 

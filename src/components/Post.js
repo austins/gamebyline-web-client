@@ -1,14 +1,12 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock, faComments, faTag, faUser } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import Moment from "react-moment";
 import { Link as LinkScroll } from "react-scroll";
-import { SRLWrapper } from "simple-react-lightbox";
 import Image from "next/image";
 import parse from "html-react-parser";
-import isUndefined from "lodash/isUndefined";
+import { isUndefined } from "lodash";
 import { parseImages } from "../lib/data/helpers";
 import styles from "../styles/Post.module.scss";
+import Time from "./Time";
+import { ChatsCircle, Clock, Tag, User } from "phosphor-react";
 
 export default function Post({ post, parseContent = false }) {
     return (
@@ -18,7 +16,7 @@ export default function Post({ post, parseContent = false }) {
 
                 <div className={styles.postMeta}>
                     <span>
-                        <FontAwesomeIcon icon={faTag} />
+                        <Tag weight="fill" />
                         <Link href={`/articles/topic/${post.categories.nodes[0].slug}`} passHref>
                             <a>{post.categories.nodes[0].name}</a>
                         </Link>
@@ -26,18 +24,13 @@ export default function Post({ post, parseContent = false }) {
 
                     {!isUndefined(post.dateGmt) && (
                         <span>
-                            <FontAwesomeIcon icon={faClock} />
-                            <Moment
-                                date={`${post.dateGmt}Z`}
-                                titleFormat={process.env.NEXT_PUBLIC_DEFAULT_POST_DATE_FORMAT}
-                                withTitle
-                                fromNow
-                            />
+                            <Clock weight="fill" />
+                            <Time dateUtc={`${post.dateGmt}Z`} />
                         </span>
                     )}
 
                     <span>
-                        <FontAwesomeIcon icon={faUser} />
+                        <User weight="fill" />
                         <Link href={`/articles/author/${post.author.node.slug}`} passHref>
                             <a>{post.author.node.name}</a>
                         </Link>
@@ -45,7 +38,7 @@ export default function Post({ post, parseContent = false }) {
 
                     {!isUndefined(post.commentCount) && (
                         <span>
-                            <FontAwesomeIcon icon={faComments} />
+                            <ChatsCircle weight="fill" />
                             <LinkScroll href="#comments" to="comments" smooth duration={100}>
                                 {post.commentCount > 0 && `${post.commentCount} `}
                                 {post.commentCount === 1 ? "Comment" : "Comments"}
@@ -56,31 +49,7 @@ export default function Post({ post, parseContent = false }) {
             </header>
 
             <div className={`clearfix ${styles.postContent}`}>
-                <SRLWrapper
-                    options={{
-                        settings: {
-                            autoplaySpeed: 0,
-                            disableKeyboardControls: true,
-                            disableWheelControls: true,
-                        },
-                        buttons: {
-                            showAutoplayButton: false,
-                            showDownloadButton: false,
-                            showFullscreenButton: false,
-                            showNextButton: false,
-                            showPrevButton: false,
-                            showThumbnailsButton: false,
-                        },
-                        caption: {
-                            showCaption: false,
-                        },
-                        thumbnails: {
-                            showThumbnails: false,
-                        },
-                    }}
-                >
-                    {parseContent ? parseImages(post.content) : parse(post.content)}
-                </SRLWrapper>
+                {parseContent ? parseImages(post.content) : parse(post.content)}
             </div>
 
             {post.author.node.description && (

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import rfdc from "rfdc";
 import useSWR from "swr";
-import has from "lodash/has";
+import { has } from "lodash";
 import { Alert, Button, Col, Form, Row } from "react-bootstrap";
 import { Link as LinkScroll } from "react-scroll";
 import { restFetcher } from "../lib/data/fetchers";

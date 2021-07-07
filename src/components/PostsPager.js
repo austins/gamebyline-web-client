@@ -1,8 +1,7 @@
 import { ButtonGroup } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import styles from "../styles/PostsPager.module.scss";
 import PostsPagerButton from "./PostsPagerButton";
+import { CaretLeft, CaretRight } from "phosphor-react";
 
 export default function PostsPager({ authorSlug, categorySlug, hasMore, hasPrevious, page, search }) {
     const articlesPath = "/articles";
@@ -32,11 +31,11 @@ export default function PostsPager({ authorSlug, categorySlug, hasMore, hasPrevi
                 <nav className={styles.pagination}>
                     <ButtonGroup>
                         <PostsPagerButton path={paths.hasMorePath} enabled={hasMore}>
-                            <FontAwesomeIcon icon={faChevronLeft} /> Older
+                            <CaretLeft weight="fill" /> Older
                         </PostsPagerButton>
 
                         <PostsPagerButton path={paths.hasPreviousPath} enabled={hasPrevious}>
-                            Newer <FontAwesomeIcon icon={faChevronRight} />
+                            Newer <CaretRight weight="fill" />
                         </PostsPagerButton>
                     </ButtonGroup>
                 </nav>

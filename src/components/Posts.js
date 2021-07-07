@@ -1,10 +1,9 @@
 import { Card, Col, Row } from "react-bootstrap";
 import Link from "next/link";
-import { faClock, faTag } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Moment from "react-moment";
 import Image from "next/image";
 import styles from "../styles/Posts.module.scss";
+import Time from "./Time";
+import { Clock, Tag } from "phosphor-react";
 
 export default function Posts({ authorName, categoryName, posts, search }) {
     return (
@@ -47,18 +46,13 @@ export default function Posts({ authorName, categoryName, posts, search }) {
 
                                             <Card.Text as="div" className={styles.postMeta}>
                                                 <span>
-                                                    <FontAwesomeIcon icon={faTag} />
+                                                    <Tag weight="fill" />
                                                     {post.categories.nodes[0].name}
                                                 </span>
 
                                                 <span>
-                                                    <FontAwesomeIcon icon={faClock} />
-                                                    <Moment
-                                                        date={`${post.dateGmt}Z`}
-                                                        titleFormat={process.env.NEXT_PUBLIC_DEFAULT_POST_DATE_FORMAT}
-                                                        withTitle
-                                                        fromNow
-                                                    />
+                                                    <Clock weight="fill" />
+                                                    <Time dateUtc={`${post.dateGmt}Z`} />
                                                 </span>
                                             </Card.Text>
                                         </Card.Body>

@@ -1,5 +1,5 @@
 import { getServerSideSitemap } from "next-sitemap";
-import has from "lodash/has";
+import { has } from "lodash";
 import { graphqlFetcher } from "../lib/data/fetchers";
 import { pagePathsQuery, postPathsQuery } from "../lib/data/queries";
 

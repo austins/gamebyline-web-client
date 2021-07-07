@@ -1,7 +1,6 @@
 import { Container } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { animateScroll as scroll } from "react-scroll";
+import { ArrowLineUp } from "phosphor-react";
 
 export default function Footer() {
     const siteCopyrightStartYear = Number(process.env.NEXT_PUBLIC_SITE_COPYRIGHT_START_YEAR);
@@ -22,7 +21,7 @@ export default function Footer() {
 
                 <div className="float-end">
                     <a href="#" onClick={scrollToTop}>
-                        <FontAwesomeIcon icon={faChevronUp} />
+                        <ArrowLineUp weight="bold" />
                     </a>
                 </div>
             </Container>

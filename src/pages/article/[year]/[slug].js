@@ -1,5 +1,5 @@
 import isInt from "validator/lib/isInt";
-import has from "lodash/has";
+import { has } from "lodash";
 import useSWR from "swr";
 import memoize from "fast-memoize";
 import HeadWithTitle from "../../../components/HeadWithTitle";

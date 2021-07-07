@@ -1,14 +1,11 @@
 import "nprogress/nprogress.css";
-import "@fortawesome/fontawesome-svg-core/styles.css";
 import "../styles/ClientApp.scss";
 import { Container } from "react-bootstrap";
-import Moment from "react-moment";
-import SimpleReactLightbox from "simple-react-lightbox";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { SWRConfig } from "swr";
 import NProgress from "nprogress";
-import debounce from "lodash/debounce";
+import { debounce } from "lodash";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
@@ -59,21 +56,17 @@ export default function ClientApp({ Component, pageProps }) {
 
     return (
         <SWRConfig value={swrConfig}>
-            <SimpleReactLightbox>
-                <Header />
+            <Header />
 
-                <main id="main">
-                    <div id="main-inner" className="py-3">
-                        <Container id="main-container">
-                            <Component {...pageProps} />
-                        </Container>
-                    </div>
-                </main>
+            <main id="main">
+                <div id="main-inner" className="py-3">
+                    <Container id="main-container">
+                        <Component {...pageProps} />
+                    </Container>
+                </div>
+            </main>
 
-                <Footer />
-            </SimpleReactLightbox>
+            <Footer />
         </SWRConfig>
     );
 }
-
-Moment.globalFilter = (dateStr) => `${dateStr.charAt(0).toUpperCase()}${dateStr.slice(1)}`;

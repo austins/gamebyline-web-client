@@ -1,15 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
-import has from "lodash/has";
+import { has } from "lodash";
 import { Fragment, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock, faReply } from "@fortawesome/free-solid-svg-icons";
-import Moment from "react-moment";
 import { Link as LinkScroll } from "react-scroll";
 import defaultAvatar from "../../public/assets/images/default-comment-avatar.jpg";
 import styles from "../styles/Comments.module.scss";
 import { flattenEdges } from "../lib/data/helpers";
-import CommentForm from "./CommentForm";
+import dynamic from "next/dynamic";
+import Time from "./Time";
+import { ArrowBendLeftUp, ArrowBendUpLeft, Clock } from "phosphor-react";
+
+const CommentForm = dynamic(() => import("./CommentForm"), { ssr: false });
 
 function ReplyToCommentMetadata(databaseId, authorName) {
     this.databaseId = databaseId;
@@ -64,7 +65,7 @@ export default function Comments({ isCommentStatusOpen, postData, postMutate }) 
                 >
                     {isChildComment && (
                         <div className="flex-shrink-0">
-                            <FontAwesomeIcon icon={faReply} />
+                            <ArrowBendLeftUp weight="fill" />
                         </div>
                     )}
 
@@ -77,18 +78,13 @@ export default function Comments({ isCommentStatusOpen, postData, postMutate }) 
                                 <br />
                                 <div className={styles.commentMeta}>
                                     <span>
-                                        <FontAwesomeIcon icon={faClock} />
-                                        <Moment
-                                            date={`${comment.dateGmt}Z`}
-                                            titleFormat={`${process.env.NEXT_PUBLIC_DEFAULT_POST_DATE_FORMAT} @ h:mm A`}
-                                            withTitle
-                                            fromNow
-                                        />
+                                        <Clock weight="fill" />
+                                        <Time dateUtc={`${comment.dateGmt}Z`} withTimeInTitle />
                                     </span>
 
                                     {isCommentStatusOpen && level === 1 && (
                                         <span>
-                                            <FontAwesomeIcon icon={faReply} />
+                                            <ArrowBendUpLeft weight="fill" />
                                             <LinkScroll
                                                 href="#comment-form"
                                                 to="comment-form"
