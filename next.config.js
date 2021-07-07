@@ -11,15 +11,6 @@ const nextConfig = {
         deviceSizes: [540, 720, 960, 1140],
         imageSizes: [16, 32, 64, 128],
     },
-    webpack: (config) => {
-        config.module.rules.push({
-            exclude: /node_modules/,
-            loader: "graphql-tag/loader",
-            test: /\.(graphql|gql)$/,
-        });
-
-        return config;
-    },
 };
 
 module.exports = withPlugins(
