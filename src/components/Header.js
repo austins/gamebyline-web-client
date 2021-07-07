@@ -14,6 +14,7 @@ import styles from "../styles/Header.module.scss";
 import { mapMenuItemsChildrenToParents } from "../lib/data/helpers";
 import { graphqlFetcher } from "../lib/data/fetchers";
 import { headerMenuQuery } from "../lib/data/queries";
+import isJSON from "validator/lib/isJSON";
 
 export default function Header() {
     const router = useRouter();
@@ -22,14 +23,10 @@ export default function Header() {
     const headerMenuDataCacheKey = "headerMenuData";
     if (typeof window !== "undefined") {
         const headerMenuDataCache = localStorage.getItem(headerMenuDataCacheKey);
-        if (headerMenuDataCache) {
-            try {
-                const parsedHeaderMenuDataCache = JSON.parse(headerMenuDataCache);
-                if (isObject(parsedHeaderMenuDataCache) && has(parsedHeaderMenuDataCache, "menu.menuItems.nodes"))
-                    mutate(headerMenuQuery, parsedHeaderMenuDataCache, false);
-            } catch {
-                // Do nothing if headerMenuDataCache is invalid.
-            }
+        if (headerMenuDataCache && isJSON(headerMenuDataCache)) {
+            const parsedHeaderMenuDataCache = JSON.parse(headerMenuDataCache);
+            if (isObject(parsedHeaderMenuDataCache) && has(parsedHeaderMenuDataCache, "menu.menuItems.nodes"))
+                mutate(headerMenuQuery, parsedHeaderMenuDataCache, false);
         }
     }
 
