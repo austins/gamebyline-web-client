@@ -1,6 +1,7 @@
+const { withPlugins, optional } = require("next-compose-plugins");
 const { withPlaiceholder } = require("@plaiceholder/next");
 
-module.exports = withPlaiceholder({
+const nextConfig = {
     reactStrictMode: true,
     images: {
         domains: [
@@ -19,4 +20,18 @@ module.exports = withPlaiceholder({
 
         return config;
     },
-});
+};
+
+module.exports = withPlugins(
+    [
+        [
+            optional(() =>
+                require("@next/bundle-analyzer")({
+                    enabled: process.env.ANALYZE === "true",
+                })
+            ),
+        ],
+        [withPlaiceholder],
+    ],
+    nextConfig
+);

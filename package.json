@@ -6,14 +6,14 @@
         "build": "next build",
         "postbuild": "next-sitemap --config next-sitemap.config.js",
         "start": "next start",
-        "format": "npx prettier --write . && next lint . --fix --ext .js --ext .ts --ext .jsx --ext .tsx"
+        "format": "npx prettier --write . && next lint . --fix --ext .js --ext .ts --ext .jsx --ext .tsx",
+        "analyze": "cross-env ANALYZE=true next build"
     },
     "engines": {
         "node": ">=14.17.0"
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^1.2.35",
-        "@fortawesome/free-brands-svg-icons": "^5.15.3",
         "@fortawesome/free-solid-svg-icons": "^5.15.3",
         "@fortawesome/react-fontawesome": "^0.1.14",
         "@next/env": "^11.0.1",
@@ -30,6 +30,7 @@
         "lodash": "^4.17.21",
         "moment": "^2.29.1",
         "next": "^11.0.1",
+        "next-compose-plugins": "^2.2.1",
         "next-connect": "^0.10.1",
         "next-sitemap": "^1.6.133",
         "nprogress": "^0.2.0",
@@ -47,6 +48,8 @@
         "validator": "^13.6.0"
     },
     "devDependencies": {
+        "@next/bundle-analyzer": "^11.0.1",
+        "cross-env": "^7.0.3",
         "eslint": "^7.30.0",
         "eslint-config-next": "^11.0.1",
         "eslint-config-prettier": "^8.3.0",
