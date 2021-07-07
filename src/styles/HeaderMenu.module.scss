@@ -1,0 +1,15 @@
+@import "node_modules/bootstrap/scss/functions";
+@import 'node_modules/bootstrap/scss/variables';
+@import 'node_modules/bootstrap/scss/mixins/breakpoints';
+
+.navbarBrand {
+    padding-bottom: 0;
+}
+
+.searchInput {
+    max-width: 156px;
+
+    @include media-breakpoint-down(lg) {
+        max-width: none;
+    }
+}

@@ -10,7 +10,7 @@ const HeaderMenu = dynamic(() => import("./HeaderMenu"), { ssr: false });
 export default function Header() {
     return (
         <header>
-            <Navbar bg="dark" variant="dark" expand="lg">
+            <Navbar bg="dark" variant="dark" expand="lg" className={styles.navbar}>
                 <Container>
                     <Link href="/" passHref>
                         <Navbar.Brand className={styles.navbarBrand}>

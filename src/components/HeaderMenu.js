@@ -1,6 +1,6 @@
 import HeaderMenuItemLink from "./HeaderMenuItemLink";
 import { Button, Form, FormControl, InputGroup, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import styles from "../styles/Header.module.scss";
+import styles from "../styles/HeaderMenu.module.scss";
 import { useRouter } from "next/router";
 import isJSON from "validator/lib/isJSON";
 import { get, has, isObject } from "lodash";
