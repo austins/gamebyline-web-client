@@ -15,13 +15,7 @@ const nextConfig = {
 
 module.exports = withPlugins(
     [
-        [
-            optional(() =>
-                require("@next/bundle-analyzer")({
-                    enabled: process.env.ANALYZE === "true",
-                })
-            ),
-        ],
+        [optional(() => require("@next/bundle-analyzer")({ enabled: process.env.ANALYZE === "true" }))],
         [withPlaiceholder],
     ],
     nextConfig
