@@ -6,7 +6,8 @@
         "build": "next build",
         "postbuild": "next-sitemap --config next-sitemap.config.js",
         "start": "next start",
-        "format": "npx prettier --write . && next lint . --fix --ext .js --ext .ts --ext .jsx --ext .tsx",
+        "lint": "next lint . --ext .js --ext .ts --ext .jsx --ext .tsx",
+        "format": "npx prettier --write . && npm run lint -- --fix",
         "analyze": "cross-env ANALYZE=true next build"
     },
     "engines": {

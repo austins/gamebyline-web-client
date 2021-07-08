@@ -1,7 +1,7 @@
-@import 'ClientApp_variables';
-@import 'node_modules/bootswatch/dist/cosmo/variables';
-@import 'node_modules/bootstrap/scss/bootstrap';
-@import 'node_modules/bootswatch/dist/cosmo/bootswatch';
+@import "ClientApp_variables";
+@import "node_modules/bootswatch/dist/cosmo/variables";
+@import "node_modules/bootstrap/scss/bootstrap";
+@import "node_modules/bootswatch/dist/cosmo/bootswatch";
 
 body {
     background-color: #222;
@@ -63,11 +63,11 @@ h1 {
 pre {
     background: theme-color("light");
     border: 1px solid theme-color("secondary");
-    margin: .5em 0 1em !important;
+    margin: 0.5em 0 1em !important;
     max-width: 100%;
     overflow: auto;
     padding: 1em !important;
-    font-size: .9em !important;
+    font-size: 0.9em !important;
     line-height: 1.5;
 }
 
@@ -127,31 +127,33 @@ figcaption {
     }
 }
 
-.alignleft, .alignright {
-    display: block
+.alignleft,
+.alignright {
+    display: block;
 }
 
 .alignleft {
     float: left;
-    margin: 0 1.3rem 1rem 0
+    margin: 0 1.3rem 0.6rem 0;
 }
 
 .aligncenter {
-    margin: 0 auto 1rem;
-    display: table
+    margin: 0 auto 0.6rem;
+    display: block;
+    text-align: center;
 }
 
 .alignright {
     float: right;
-    margin: 0 0 1rem 1.3rem
+    margin: 0 0 0.6rem 1.3rem;
 }
 
 @include media-breakpoint-down(sm) {
     .alignleft,
     .aligncenter,
     .alignright {
-        margin: 0 0 1rem !important;
-        float: none !important
+        margin: 0 0 0.6rem !important;
+        float: none !important;
     }
 }
 

@@ -18,7 +18,7 @@ Pages are statically generated at build-time except for certain dynamic pages (s
 2. Run the development server: `npm run dev`
 3. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Preferably, configure your IDE to run `eslint --fix` on save and prettier on code reformat and save for file extensions: `{**/*,*}.{js,ts,jsx,tsx}`.
+Preferably, configure your IDE to run `eslint --fix` on save for file extensions: `{**/*,*}.{js,ts,jsx,tsx}` and prettier on code reformat and save for file extensions: `{**/*,*}.{js,ts,jsx,tsx,json,css,scss}`.
 
 ## Deployment
 
