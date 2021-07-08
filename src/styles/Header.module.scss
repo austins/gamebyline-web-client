@@ -1,7 +1,8 @@
 .navbar {
     background-color: #222;
     /* Background pattern from Toptal Subtle Patterns */
-    background-image: linear-gradient(to bottom, rgba(68, 68, 68, 0.3), transparent), url('/assets/images/bg-crissXcross.webp');
+    background-image: linear-gradient(to bottom, rgba(68, 68, 68, 0.3), transparent),
+        url("/assets/images/bg-crissXcross.webp");
     border-bottom: 1px solid rgba(20, 20, 20, 0.4);
     box-shadow: 0 0 12px 4px #1a1a1a;
 }

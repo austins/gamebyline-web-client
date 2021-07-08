@@ -1,7 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&Roboto+Condensed&display=swap');
-$font-family-sans-serif: 'Open Sans', "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&Roboto+Condensed&display=swap");
+$font-family-sans-serif: "Open Sans", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
 $font-family-serif: $font-family-sans-serif;
-$headings-font-family: 'Roboto Condensed', $font-family-sans-serif;
+$headings-font-family: "Roboto Condensed", $font-family-sans-serif;
 
 $link-decoration: none;
 $link-color: #5898fb;
