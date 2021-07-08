@@ -5,7 +5,7 @@ import logoLight from "../../public/assets/images/logo-light.png";
 import styles from "../styles/Header.module.scss";
 import dynamic from "next/dynamic";
 
-const HeaderMenu = dynamic(() => import("./HeaderMenu"), { ssr: false });
+const HeaderMenu = dynamic(() => import("./HeaderMenu"));
 
 export default function Header() {
     return (
