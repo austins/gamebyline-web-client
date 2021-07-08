@@ -9,8 +9,9 @@ import { flattenEdges } from "../lib/data/helpers";
 import dynamic from "next/dynamic";
 import Time from "./Time";
 import { ArrowBendLeftUp, ArrowBendUpLeft, Clock } from "phosphor-react";
+import LoadingSpinner from "./LoadingSpinner";
 
-const CommentForm = dynamic(() => import("./CommentForm"), { ssr: false });
+const CommentForm = dynamic(() => import("./CommentForm"), { ssr: false, loading: () => <LoadingSpinner /> });
 
 function ReplyToCommentMetadata(databaseId, authorName) {
     this.databaseId = databaseId;
