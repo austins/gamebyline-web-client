@@ -2,17 +2,30 @@ import HeaderMenuItemLink from "./HeaderMenuItemLink";
 import { Button, Form, FormControl, InputGroup, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import styles from "../styles/HeaderMenu.module.scss";
 import { useRouter } from "next/router";
-import { get } from "lodash";
+import { get, has, isObject } from "lodash";
 import useSWR from "swr";
 import { headerMenuQuery } from "../lib/data/queries";
 import { graphqlFetcher } from "../lib/data/fetchers";
 import { mapMenuItemsChildrenToParents } from "../lib/data/helpers";
 import { MagnifyingGlass } from "phosphor-react";
+import isJSON from "validator/lib/isJSON";
 
 export default function HeaderMenu() {
     const router = useRouter();
 
+    // Get header menu data from localStorage.
+    let initialHeaderMenuData = {};
+    if (typeof window !== "undefined") {
+        const headerMenuDataCache = localStorage.getItem("headerMenuData");
+        if (headerMenuDataCache && isJSON(headerMenuDataCache)) {
+            const parsedHeaderMenuDataCache = JSON.parse(headerMenuDataCache);
+            if (isObject(parsedHeaderMenuDataCache) && has(parsedHeaderMenuDataCache, "menu.menuItems.nodes"))
+                initialHeaderMenuData = parsedHeaderMenuDataCache;
+        }
+    }
+
     const { data: headerMenuData } = useSWR(headerMenuQuery, graphqlFetcher, {
+        initialData: initialHeaderMenuData,
         revalidateOnMount: true,
         onSuccess: (fetchedHeaderMenuData) =>
             localStorage.setItem("headerMenuData", JSON.stringify(fetchedHeaderMenuData)),

@@ -3,13 +3,11 @@ import "../styles/ClientApp.scss";
 import { Container } from "react-bootstrap";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { mutate, SWRConfig } from "swr";
+import { SWRConfig } from "swr";
 import NProgress from "nprogress";
-import { debounce, has, isObject } from "lodash";
+import { debounce } from "lodash";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import isJSON from "validator/lib/isJSON";
-import { headerMenuQuery } from "../lib/data/queries";
 
 export default function ClientApp({ Component, pageProps }) {
     const router = useRouter();
@@ -55,16 +53,6 @@ export default function ClientApp({ Component, pageProps }) {
     // Disable revalidate on focus by default since we don't need it now (ISG is suitable) and to reduce API calls.
     // If we later want to make the site more dynamic, we can enable revalidateOnFocus.
     const swrConfig = { revalidateOnFocus: false };
-
-    // Get menu items and mutate SWR cache for use in the HeaderMenu component.
-    if (typeof window !== "undefined") {
-        const headerMenuDataCache = localStorage.getItem("headerMenuData");
-        if (headerMenuDataCache && isJSON(headerMenuDataCache)) {
-            const parsedHeaderMenuDataCache = JSON.parse(headerMenuDataCache);
-            if (isObject(parsedHeaderMenuDataCache) && has(parsedHeaderMenuDataCache, "menu.menuItems.nodes"))
-                mutate(headerMenuQuery, parsedHeaderMenuDataCache, false);
-        }
-    }
 
     return (
         <SWRConfig value={swrConfig}>
