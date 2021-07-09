@@ -153,7 +153,12 @@ figcaption {
     .aligncenter,
     .alignright {
         margin: 0 0 0.6rem !important;
+    }
+
+    .alignleft,
+    .alignright {
         float: none !important;
+        text-align: center;
     }
 }
 
