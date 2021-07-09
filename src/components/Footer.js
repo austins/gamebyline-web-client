@@ -21,7 +21,7 @@ export default function Footer() {
 
                 <div className="float-end">
                     <a href="#" onClick={scrollToTop}>
-                        <ArrowLineUp weight="bold" />
+                        <span className="visually-hidden">Scroll to Top</span> <ArrowLineUp weight="bold" />
                     </a>
                 </div>
             </Container>
