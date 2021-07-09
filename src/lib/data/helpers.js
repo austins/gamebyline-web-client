@@ -42,8 +42,8 @@ export function mapMenuItemsChildrenToParents(menuItemsNodes) {
 export async function generateFeaturedImagePlaceholders(getPlaiceholder, postsEdges) {
     for (const edge of postsEdges) {
         const post = edge.node;
-        if (has(post, "featuredImage.node.mediaItemUrl")) {
-            const { base64 } = await getPlaiceholder(post.featuredImage.node.mediaItemUrl);
+        if (has(post, "featuredImage.node.sourceUrl")) {
+            const { base64 } = await getPlaiceholder(post.featuredImage.node.sourceUrl);
             post.featuredImage.node.blurDataURL = base64;
         }
     }

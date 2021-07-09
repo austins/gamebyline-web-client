@@ -31,7 +31,7 @@ export async function getServerSideProps({ req, res }) {
             date: postDate,
             description: striptags(post.excerpt),
             id: postLink,
-            image: post.featuredImage.node.mediaItemUrl ?? null,
+            image: post.featuredImage.node.sourceUrl ?? null,
             link: postLink,
             title: post.title,
         });
