@@ -2,9 +2,8 @@ import HeaderMenuItemLink from "./HeaderMenuItemLink";
 import { Button, Form, FormControl, InputGroup, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import styles from "../styles/HeaderMenu.module.scss";
 import { useRouter } from "next/router";
-import isJSON from "validator/lib/isJSON";
-import { get, has, isObject } from "lodash";
-import useSWR, { mutate } from "swr";
+import { get } from "lodash";
+import useSWR from "swr";
 import { headerMenuQuery } from "../lib/data/queries";
 import { graphqlFetcher } from "../lib/data/fetchers";
 import { mapMenuItemsChildrenToParents } from "../lib/data/helpers";
@@ -13,21 +12,10 @@ import { MagnifyingGlass } from "phosphor-react";
 export default function HeaderMenu() {
     const router = useRouter();
 
-    // Get menu items.
-    const headerMenuDataCacheKey = "headerMenuData";
-    if (typeof window !== "undefined") {
-        const headerMenuDataCache = localStorage.getItem(headerMenuDataCacheKey);
-        if (headerMenuDataCache && isJSON(headerMenuDataCache)) {
-            const parsedHeaderMenuDataCache = JSON.parse(headerMenuDataCache);
-            if (isObject(parsedHeaderMenuDataCache) && has(parsedHeaderMenuDataCache, "menu.menuItems.nodes"))
-                mutate(headerMenuQuery, parsedHeaderMenuDataCache, false);
-        }
-    }
-
     const { data: headerMenuData } = useSWR(headerMenuQuery, graphqlFetcher, {
         revalidateOnMount: true,
         onSuccess: (fetchedHeaderMenuData) =>
-            localStorage.setItem(headerMenuDataCacheKey, JSON.stringify(fetchedHeaderMenuData)),
+            localStorage.setItem("headerMenuData", JSON.stringify(fetchedHeaderMenuData)),
     });
 
     let menuItems = get(headerMenuData ?? {}, "menu.menuItems.nodes", []);
