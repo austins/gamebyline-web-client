@@ -87,7 +87,7 @@ export default function HeaderMenu() {
                         />
 
                         <Button type="submit" variant="primary">
-                            <MagnifyingGlass weight="fill" />
+                            <span className="visually-hidden">Search</span> <MagnifyingGlass weight="fill" />
                         </Button>
                     </InputGroup>
                 </Form>

@@ -11,6 +11,7 @@ const nextConfig = {
         deviceSizes: [540, 720, 960, 1140],
         imageSizes: [16, 32, 64, 128],
     },
+    poweredByHeader: false,
 };
 
 module.exports = withPlugins(
