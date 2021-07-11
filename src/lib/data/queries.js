@@ -147,7 +147,6 @@ export const postsQuery = gql`
                     dateGmt
                     title
                     excerpt
-                    content
                     author {
                         node {
                             name
