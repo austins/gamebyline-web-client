@@ -7,7 +7,10 @@ import { graphqlFetcher } from "../../../lib/data/fetchers";
 export default function ArticlesRssFeed() {}
 
 export async function getServerSideProps({ req, res }) {
-    const postsData = await graphqlFetcher(postsQuery, { size: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE) });
+    const postsData = await graphqlFetcher(postsQuery, {
+        size: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE),
+        withContent: true,
+    });
 
     const posts = flattenEdges(postsData.posts);
     const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
@@ -25,13 +28,13 @@ export async function getServerSideProps({ req, res }) {
     posts.forEach((post) => {
         const postDate = new Date(`${post.dateGmt}Z`);
         const postLink = new URL(`/article/${postDate.getUTCFullYear()}/${post.slug}`, siteLink).href;
-
+        console.log(post);
         feed.addItem({
             content: post.content,
             date: postDate,
             description: striptags(post.excerpt),
             id: postLink,
-            image: post.featuredImage.node.sourceUrl ?? null,
+            image: post.featuredImage?.node.sourceUrl ?? null,
             link: postLink,
             title: post.title,
         });
