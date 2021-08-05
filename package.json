@@ -15,7 +15,7 @@
     },
     "dependencies": {
         "@plaiceholder/next": "^2.1.0",
-        "bootstrap": "^5.0.2",
+        "bootstrap": "^5.1.0",
         "bootswatch": "^5.0.2",
         "dayjs": "^1.10.6",
         "fast-memoize": "^2.5.2",
