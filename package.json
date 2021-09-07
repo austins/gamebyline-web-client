@@ -23,7 +23,7 @@
         "graphql": "^15.5.2",
         "graphql-request": "^3.5.0",
         "he": "^1.2.0",
-        "html-react-parser": "^1.2.8",
+        "html-react-parser": "^1.2.9",
         "http-status-codes": "^2.1.4",
         "lodash": "^4.17.21",
         "next": "^11.1.2",
