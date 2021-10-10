@@ -14,18 +14,18 @@ export default function HeaderMenu() {
     const router = useRouter();
 
     // Get header menu data from localStorage.
-    let initialHeaderMenuData = {};
+    let fallbackHeaderMenuData = {};
     if (typeof window !== "undefined") {
         const headerMenuDataCache = localStorage.getItem("headerMenuData");
         if (headerMenuDataCache && isJSON(headerMenuDataCache)) {
             const parsedHeaderMenuDataCache = JSON.parse(headerMenuDataCache);
             if (isObject(parsedHeaderMenuDataCache) && has(parsedHeaderMenuDataCache, "menu.menuItems.nodes"))
-                initialHeaderMenuData = parsedHeaderMenuDataCache;
+                fallbackHeaderMenuData = parsedHeaderMenuDataCache;
         }
     }
 
     const { data: headerMenuData } = useSWR(headerMenuQuery, graphqlFetcher, {
-        initialData: initialHeaderMenuData,
+        fallbackData: fallbackHeaderMenuData,
         revalidateOnMount: true,
         onSuccess: (fetchedHeaderMenuData) =>
             localStorage.setItem("headerMenuData", JSON.stringify(fetchedHeaderMenuData)),

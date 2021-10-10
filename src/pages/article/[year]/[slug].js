@@ -12,18 +12,18 @@ const Comments = dynamic(() => import("../../../components/Comments"));
 
 const getPostQueryVars = memoize((slug) => ({ slug }));
 
-export default function SinglePost({ slug, initialPostData }) {
-    const isCommentStatusOpen = initialPostData.post.commentStatus === "open";
+export default function SinglePost({ slug, fallbackPostData }) {
+    const isCommentStatusOpen = fallbackPostData.post.commentStatus === "open";
 
     const { data, mutate } = useSWR([postQuery, getPostQueryVars(slug)], graphqlFetcher, {
-        initialData: initialPostData,
+        fallbackData: fallbackPostData,
         revalidateOnMount: isCommentStatusOpen, // Since we have Incremental Static Regeneration, the page may be cached, so we should refetch the latest comments data.
     });
 
     // Disable error checking for now since revalidateOnMount causes error to be thrown on fast refreshes.
     // if (error) return <Error statusCode={error.statusCode} />;
 
-    // Disable data loading check for now since initialData is populated.
+    // Disable data loading check for now since fallbackData is populated.
     // if (!data) return <LoadingSpinner />;
 
     const { post } = data;
@@ -50,14 +50,14 @@ export async function getStaticProps({ params }) {
 
     if (!isInt(year, { allow_leading_zeroes: false })) return { notFound: true };
 
-    const initialPostData = await graphqlFetcher(postQuery, getPostQueryVars(slug));
+    const fallbackPostData = await graphqlFetcher(postQuery, getPostQueryVars(slug));
     if (
-        !has(initialPostData, "post.id") ||
-        new Date(`${initialPostData.post.dateGmt}Z`).getUTCFullYear() !== Number.parseInt(year, 10)
+        !has(fallbackPostData, "post.id") ||
+        new Date(`${fallbackPostData.post.dateGmt}Z`).getUTCFullYear() !== Number.parseInt(year, 10)
     )
         return { notFound: true };
 
-    return { props: { year, slug, initialPostData }, revalidate: Number(process.env.REVALIDATION_IN_SECONDS) };
+    return { props: { year, slug, fallbackPostData }, revalidate: Number(process.env.REVALIDATION_IN_SECONDS) };
 }
 
 export async function getStaticPaths() {
