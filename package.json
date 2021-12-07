@@ -23,7 +23,7 @@
         "graphql": "^16.0.1",
         "graphql-request": "^3.7.0",
         "he": "^1.2.0",
-        "html-react-parser": "^1.4.1",
+        "html-react-parser": "^1.4.2",
         "http-status-codes": "^2.1.4",
         "lodash": "^4.17.21",
         "next": "^12.0.5",
@@ -44,13 +44,13 @@
         "validator": "^13.7.0"
     },
     "devDependencies": {
-        "@next/bundle-analyzer": "^12.0.5",
+        "@next/bundle-analyzer": "^12.0.7",
         "babel-plugin-lodash": "^3.3.4",
         "cross-env": "^7.0.3",
         "eslint": "^7.32.0",
         "eslint-config-next": "^12.0.5",
         "eslint-config-prettier": "^8.3.0",
-        "prettier": "2.5.0",
+        "prettier": "2.5.1",
         "sass": "~1.32.12"
     }
 }
