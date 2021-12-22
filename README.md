@@ -8,7 +8,7 @@ Pages are statically generated at build-time except for certain dynamic pages (s
 
 ## Requirements
 
-- Node.js (LTS v14.17.0 is the minimum version necessary)
+- Node.js (LTS v16.13.1 is the minimum version necessary)
 - A backend powered by WordPress with these plugins at the minimum:
   - [WPGraphQL](https://wordpress.org/plugins/wp-graphql/), [WPGraphQL Offset Pagination](https://github.com/valu-digital/wp-graphql-offset-pagination), [Custom Post Type UI](https://wordpress.org/plugins/custom-post-type-ui/), [Advanced Custom Fields](https://wordpress.org/plugins/advanced-custom-fields/), [WPGraphQL for Advanced Custom Fields](https://github.com/wp-graphql/wp-graphql-acf), [Yoast SEO](https://wordpress.org/plugins/wordpress-seo/), and [WPGraphQL Yoast SEO Addon](https://wordpress.org/plugins/add-wpgraphql-seo/). 
 
