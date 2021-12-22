@@ -11,7 +11,7 @@
         "analyze": "cross-env ANALYZE=true next build"
     },
     "engines": {
-        "node": ">=14.17.0"
+        "node": ">=16.13.1"
     },
     "dependencies": {
         "@plaiceholder/next": "^2.2.0",
