@@ -1,5 +1,5 @@
 import isInt from "validator/lib/isInt";
-import { has } from "lodash";
+import has from "lodash/has";
 import useSWR from "swr";
 import HeadWithTitle from "../../../components/HeadWithTitle";
 import { postQuery, postPathsQuery } from "../../../lib/data/queries";

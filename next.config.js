@@ -3,6 +3,7 @@ const { withPlaiceholder } = require("@plaiceholder/next");
 
 const nextConfig = {
     reactStrictMode: true,
+    swcMinify: true,
     images: {
         domains: [
             new URL(process.env.NEXT_PUBLIC_SITE_URL).host,

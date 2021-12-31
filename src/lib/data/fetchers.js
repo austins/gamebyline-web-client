@@ -1,5 +1,6 @@
 import { GraphQLClient, request } from "graphql-request";
-import { isString, set } from "lodash";
+import isString from "lodash/isString";
+import set from "lodash/set";
 import { StatusCodes } from "http-status-codes";
 
 export const restFetcher = async (url) => {

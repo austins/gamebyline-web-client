@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { capitalize } from "lodash";
+import capitalize from "lodash/capitalize";
 
 dayjs.extend(relativeTime);
 

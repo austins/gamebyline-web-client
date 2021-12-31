@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { SWRConfig } from "swr";
 import NProgress from "nprogress";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 

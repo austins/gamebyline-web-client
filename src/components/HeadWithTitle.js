@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { isString } from "lodash";
+import isString from "lodash/isString";
 import parse from "html-react-parser";
 
 export default function HeadWithTitle({ title, noIndex, description, innerHTMLString, children }) {

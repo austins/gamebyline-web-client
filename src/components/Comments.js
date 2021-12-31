@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { has } from "lodash";
+import has from "lodash/has";
 import { Fragment, useState } from "react";
 import { Link as LinkScroll } from "react-scroll";
 import defaultAvatar from "../../public/assets/images/default-comment-avatar.jpg";

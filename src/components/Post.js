@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Link as LinkScroll } from "react-scroll";
 import Image from "next/image";
 import parse from "html-react-parser";
-import { isUndefined } from "lodash";
+import isUndefined from "lodash/isUndefined";
 import { parseImages } from "../lib/data/helpers";
 import styles from "../styles/Post.module.scss";
 import Time from "./Time";
