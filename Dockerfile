@@ -18,8 +18,9 @@ ENV NODE_ENV=production \
     NEXT_PUBLIC_API_GRAPHQL_URL=${NEXT_PUBLIC_API_GRAPHQL_URL} \
     NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID=${NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID}
 
-COPY . .
 COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
 RUN npm run build
 
 # Production image. Copy all the files and run the app.
@@ -31,9 +32,12 @@ ENV NODE_ENV=production
 COPY --from=builder /app/.env ./
 COPY --from=builder /app/next.config.js ./
 COPY --from=builder /app/public ./public
-COPY --from=builder --chown=node:node /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package-lock.json ./package-lock.json
+COPY --from=builder /app/package.json ./package.json
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=node:node /app/.next/standalone ./
+COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 
 USER node
 

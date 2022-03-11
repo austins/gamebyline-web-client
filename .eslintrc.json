@@ -1,18 +1,9 @@
 {
-    "plugins": [
-        "lodash"
-    ],
-    "extends": [
-        "next",
-        "next/core-web-vitals",
-        "prettier"
-    ],
+    "plugins": ["lodash"],
+    "extends": ["next", "next/core-web-vitals", "prettier"],
     "rules": {
         "jsx-a11y/alt-text": "off",
         "react/display-name": "off",
-        "lodash/import-scope": [
-            "error",
-            "method"
-        ]
+        "lodash/import-scope": ["error", "method"]
     }
 }
