@@ -6,5 +6,3 @@ updates:
             interval: "daily"
             time: "18:30"
             timezone: "America/Los_Angeles"
-        ignore:
-            -   dependency-name: "sass"
