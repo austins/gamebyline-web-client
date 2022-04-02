@@ -6,8 +6,7 @@ export default function HeadWithTitle({ title, noIndex, description, innerHTMLSt
     return (
         <Head>
             <title>
-                {isString(title) && title.length > 0 ? `${title} – ` : ""}
-                {process.env.NEXT_PUBLIC_SITE_NAME}
+                {(isString(title) && title.length > 0 ? `${title} – ` : "") + process.env.NEXT_PUBLIC_SITE_NAME}
             </title>
 
             {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID && (
