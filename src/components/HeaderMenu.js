@@ -11,9 +11,23 @@ import { graphqlFetcher } from "../lib/data/fetchers";
 import { mapMenuItemsChildrenToParents } from "../lib/data/helpers";
 import { MagnifyingGlass } from "phosphor-react";
 import isJSON from "validator/lib/isJSON";
+import { useEffect, useState } from "react";
 
 export default function HeaderMenu() {
     const router = useRouter();
+
+    const [searching, setSearching] = useState(false);
+    const stopSearching = () => setSearching(false);
+
+    useEffect(() => {
+        router.events.on("routeChangeComplete", stopSearching);
+        router.events.on("routeChangeError", stopSearching);
+
+        return () => {
+            router.events.off("routeChangeComplete", stopSearching);
+            router.events.off("routeChangeError", stopSearching);
+        };
+    }, [router]);
 
     // Get header menu data from localStorage.
     // This requires importing this component dynamically with no SSR as this only works in the browser.
@@ -40,6 +54,7 @@ export default function HeaderMenu() {
 
         const searchValue = e.target.search.value.trim();
         if (searchValue.length) {
+            setSearching(true);
             router.push({ pathname: "/articles", query: { search: searchValue } });
             e.target.search.value = "";
         }
@@ -88,7 +103,17 @@ export default function HeaderMenu() {
                         />
 
                         <Button type="submit" variant="primary">
-                            <span className="visually-hidden">Search</span> <MagnifyingGlass weight="fill" />
+                            {searching ? (
+                                <>
+                                    <span className="visually-hidden">Searching...</span>
+                                    <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                                </>
+                            ) : (
+                                <>
+                                    <span className="visually-hidden">Search</span>
+                                    <MagnifyingGlass weight="fill" aria-hidden="true" />
+                                </>
+                            )}
                         </Button>
                     </InputGroup>
                 </Form>
