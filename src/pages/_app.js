@@ -4,8 +4,6 @@ import { Container } from "react-bootstrap";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { SWRConfig } from "swr";
-import NProgress from "nprogress";
-import debounce from "lodash/debounce";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
@@ -13,13 +11,6 @@ export default function ClientApp({ Component, pageProps }) {
     const router = useRouter();
 
     useEffect(() => {
-        // NProgress handlers.
-        const startNProgress = debounce(NProgress.start, 300);
-        const stopNProgress = () => {
-            startNProgress.cancel();
-            NProgress.done();
-        };
-
         // Google Analytics page path handler.
         const setGoogleAnalyticsPagePath = (url) => {
             if (process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID && window.gtag) {
@@ -30,24 +21,11 @@ export default function ClientApp({ Component, pageProps }) {
         };
 
         // Router change handlers.
-        const handleRouteChangeStart = () => startNProgress();
+        const handleRouteChangeComplete = (url) => setGoogleAnalyticsPagePath(url);
 
-        const handleRouteChangeComplete = (url) => {
-            stopNProgress();
-            setGoogleAnalyticsPagePath(url);
-        };
-
-        const handleRouteChangeError = () => stopNProgress();
-
-        router.events.on("routeChangeStart", handleRouteChangeStart);
         router.events.on("routeChangeComplete", handleRouteChangeComplete);
-        router.events.on("routeChangeError", handleRouteChangeError);
 
-        return () => {
-            router.events.off("routeChangeStart", handleRouteChangeStart);
-            router.events.off("routeChangeComplete", handleRouteChangeComplete);
-            router.events.off("routeChangeError", handleRouteChangeError);
-        };
+        return () => router.events.off("routeChangeComplete", handleRouteChangeComplete);
     }, [router]);
 
     // Disable revalidate on focus by default since we don't need it now (ISG is suitable) and to reduce API calls.
