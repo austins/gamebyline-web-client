@@ -1,4 +1,3 @@
-import "nprogress/nprogress.css";
 import "../styles/ClientApp.scss";
 import { Container } from "react-bootstrap";
 import { useRouter } from "next/router";
