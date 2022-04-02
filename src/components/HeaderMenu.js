@@ -16,14 +16,13 @@ export default function HeaderMenu() {
     const router = useRouter();
 
     // Get header menu data from localStorage.
+    // This requires importing this component dynamically with no SSR as this only works in the browser.
     let fallbackHeaderMenuData = {};
-    if (typeof window !== "undefined") {
-        const headerMenuDataCache = localStorage.getItem("headerMenuData");
-        if (headerMenuDataCache && isJSON(headerMenuDataCache)) {
-            const parsedHeaderMenuDataCache = JSON.parse(headerMenuDataCache);
-            if (isObject(parsedHeaderMenuDataCache) && has(parsedHeaderMenuDataCache, "menu.menuItems.nodes"))
-                fallbackHeaderMenuData = parsedHeaderMenuDataCache;
-        }
+    const headerMenuDataCache = localStorage.getItem("headerMenuData");
+    if (headerMenuDataCache && isJSON(headerMenuDataCache)) {
+        const parsedHeaderMenuDataCache = JSON.parse(headerMenuDataCache);
+        if (isObject(parsedHeaderMenuDataCache) && has(parsedHeaderMenuDataCache, "menu.menuItems.nodes"))
+            fallbackHeaderMenuData = parsedHeaderMenuDataCache;
     }
 
     const { data: headerMenuData } = useSWR(headerMenuQuery, graphqlFetcher, {
