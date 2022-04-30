@@ -49,6 +49,6 @@
         "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-lodash": "^7.4.0",
         "prettier": "^2.6.2",
-        "sass": "^1.50.1"
+        "sass": "^1.51.0"
     }
 }
