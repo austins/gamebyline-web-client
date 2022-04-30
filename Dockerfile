@@ -9,19 +9,18 @@ RUN npm ci
 FROM node:lts-alpine AS builder
 WORKDIR /app
 
-ARG NEXT_PUBLIC_SITE_URL
-ARG NEXT_PUBLIC_API_GRAPHQL_URL
-ARG NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID
-
-ENV NODE_ENV=production \
-    NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL} \
-    NEXT_PUBLIC_API_GRAPHQL_URL=${NEXT_PUBLIC_API_GRAPHQL_URL} \
-    NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID=${NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID}
+ENV NODE_ENV=production
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN npm run build
+RUN --mount=type=secret,id=NEXT_PUBLIC_SITE_URL \
+  --mount=type=secret,id=NEXT_PUBLIC_API_GRAPHQL_URL \
+  --mount=type=secret,id=NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID \
+   export NEXT_PUBLIC_SITE_URL=$(cat /run/secrets/NEXT_PUBLIC_SITE_URL) && \
+   export NEXT_PUBLIC_API_GRAPHQL_URL=$(cat /run/secrets/NEXT_PUBLIC_API_GRAPHQL_URL) && \
+   export NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID=$(cat /run/secrets/NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID) && \
+   npm run build
 
 # Production image. Copy all the files and run the app.
 FROM node:lts-alpine AS runner
