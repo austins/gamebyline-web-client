@@ -14,6 +14,7 @@ const nextConfig = {
         imageSizes: [16, 32, 64, 128],
     },
     poweredByHeader: false,
+    compress: false,
 };
 
 module.exports = withPlugins(
