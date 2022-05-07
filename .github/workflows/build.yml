@@ -21,6 +21,7 @@ jobs:
             NEXT_PUBLIC_API_GRAPHQL_URL: ${{ secrets.NEXT_PUBLIC_API_GRAPHQL_URL }}
             NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID }}
     automerge:
+        if: ${{ github.actor == 'dependabot[bot]' }}
         needs: docker
         runs-on: ubuntu-latest
         steps:
