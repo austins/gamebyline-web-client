@@ -25,7 +25,7 @@
         "html-react-parser": "^1.4.14",
         "http-status-codes": "^2.2.0",
         "lodash": "^4.17.21",
-        "next": "^12.1.6",
+        "next": "^12.2.0",
         "next-compose-plugins": "^2.2.1",
         "next-connect": "^0.12.2",
         "next-sitemap": "^2.5.28",
