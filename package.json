@@ -27,7 +27,7 @@
         "lodash": "^4.17.21",
         "next": "^12.2.2",
         "next-compose-plugins": "^2.2.1",
-        "next-connect": "^0.12.2",
+        "next-connect": "^0.13.0",
         "next-sitemap": "^2.5.28",
         "phosphor-react": "^1.4.1",
         "plaiceholder": "^2.4.0",
