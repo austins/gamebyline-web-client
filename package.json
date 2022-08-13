@@ -17,7 +17,7 @@
         "@plaiceholder/next": "^2.4.0",
         "bootstrap": "^5.2.0",
         "bootswatch": "^5.2.0",
-        "dayjs": "^1.11.4",
+        "dayjs": "^1.11.5",
         "feed": "^4.2.2",
         "graphql": "^16.5.0",
         "graphql-request": "^4.3.0",
